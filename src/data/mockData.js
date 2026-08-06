@@ -368,7 +368,7 @@ export const worldCurrencies = [
 export const defaultSettings = {
   storeName: 'Miss Faria Admin',
   contactEmail: 'admin@missfaria-store.com',
-  currency: 'USD ($) - US Dollar',
+  currency: 'PKR (Rs) - Pakistani Rupee',
   lowStockGlobalThreshold: 10,
   defaultWeightUnit: 'kg',
   defaultDimensionUnit: 'cm',

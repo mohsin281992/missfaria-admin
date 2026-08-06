@@ -19,8 +19,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const UPLOAD_DIR = path.join(__dirname, 'uploads');
 
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+try {
+  if (!fs.existsSync(UPLOAD_DIR)) {
+    fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+  }
+} catch (err) {
+  console.warn('Could not create UPLOAD_DIR on startup (e.g. read-only filesystem):', err.message);
 }
 
 const app = express();
@@ -50,11 +54,15 @@ app.use('/api/settings', settingsRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/upload', uploadRouter);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`==================================================`);
-  console.log(`🚀 Node.js Backend Server running on port ${PORT}`);
-  console.log(`📡 API Base URL: http://localhost:${PORT}/api`);
-  console.log(`🖼️ Uploads URL:  http://localhost:${PORT}/uploads`);
-  console.log(`==================================================`);
-});
+// Start server if not running in Vercel serverless environment
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`==================================================`);
+    console.log(`🚀 Node.js Backend Server running on port ${PORT}`);
+    console.log(`📡 API Base URL: http://localhost:${PORT}/api`);
+    console.log(`🖼️ Uploads URL:  http://localhost:${PORT}/uploads`);
+    console.log(`==================================================`);
+  });
+}
+
+export default app;
