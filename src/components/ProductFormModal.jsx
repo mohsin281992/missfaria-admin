@@ -377,6 +377,48 @@ export default function ProductFormModal({
 
                 <div className="grid-2">
                   <div className="form-group">
+                    <label className="form-label">Primary Category *</label>
+                    <select 
+                      value={formData.primaryCategory}
+                      onChange={(e) => setFormData({ ...formData, primaryCategory: e.target.value })}
+                      className="form-select"
+                      required
+                    >
+                      {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Add New Category (Optional)</label>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <input 
+                        type="text" 
+                        placeholder="Create new category name..."
+                        value={newSubCat}
+                        onChange={(e) => setNewSubCat(e.target.value)}
+                        className="form-input"
+                      />
+                      <button 
+                        type="button" 
+                        onClick={() => {
+                          if (newSubCat.trim()) {
+                            if (onAddCategory) onAddCategory(newSubCat.trim());
+                            setFormData(prev => ({ ...prev, primaryCategory: newSubCat.trim() }));
+                            setNewSubCat('');
+                          }
+                        }}
+                        className="btn btn-secondary"
+                        disabled={!newSubCat.trim()}
+                        style={{ whiteSpace: 'nowrap' }}
+                      >
+                        <Plus size={16} /> Add
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid-2">
+                  <div className="form-group">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <label className="form-label">SKU (Stock Keeping Unit) *</label>
                       <button 
