@@ -95,20 +95,8 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* Quick Action Button */}
-      <div style={{ padding: '16px 20px' }}>
-        <button 
-          onClick={onAddProductClick}
-          className="btn btn-primary"
-          style={{ width: '100%', justifyContent: 'center' }}
-        >
-          <Plus size={18} />
-          New Product
-        </button>
-      </div>
-
       {/* Navigation Links */}
-      <nav style={{ flex: 1, padding: '12px', display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto' }}>
+      <nav style={{ flex: 1, padding: '16px 12px 12px 12px', display: 'flex', flexDirection: 'column', gap: '4px', overflowY: 'auto' }}>
         <div style={{ padding: '0 12px 8px 12px', fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
           Navigation Menu
         </div>
