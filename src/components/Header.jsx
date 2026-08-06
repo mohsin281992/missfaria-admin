@@ -75,15 +75,6 @@ export default function Header({
             background: 'var(--danger)'
           }} />
         </button>
-
-        {/* Quick Add Button */}
-        <button 
-          onClick={onAddProductClick}
-          className="btn btn-primary btn-sm"
-        >
-          <Plus size={16} />
-          Add Product
-        </button>
       </div>
     </header>
   );

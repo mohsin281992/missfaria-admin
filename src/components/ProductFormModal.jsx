@@ -19,7 +19,8 @@ import {
   Box,
   Eye,
   Info,
-  Upload
+  Upload,
+  Star
 } from 'lucide-react';
 import { uploadImageFile } from '../services/api';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatters';
@@ -98,25 +99,90 @@ export default function ProductFormModal({
   const [newTag, setNewTag] = useState('');
   const [newSubCat, setNewSubCat] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [imageUrlInput, setImageUrlInput] = useState('');
 
   const handleImageFileSelect = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
     try {
       setIsUploading(true);
-      const data = await uploadImageFile(file);
-      setFormData(prev => ({ ...prev, mainImage: data.url }));
+      const newUrls = [];
+      for (const file of files) {
+        const data = await uploadImageFile(file);
+        if (data && data.url) {
+          newUrls.push(data.url);
+        }
+      }
+      if (newUrls.length > 0) {
+        setFormData(prev => {
+          const currentGallery = Array.isArray(prev.galleryImages) ? prev.galleryImages : [];
+          const updatedGallery = [...currentGallery, ...newUrls];
+          const updatedMain = (!prev.mainImage || prev.mainImage.trim() === '' || prev.mainImage.includes('unsplash')) ? newUrls[0] : prev.mainImage;
+          return {
+            ...prev,
+            galleryImages: updatedGallery,
+            mainImage: updatedMain
+          };
+        });
+      }
     } catch (err) {
-      alert('Failed to upload image: ' + err.message);
+      alert('Failed to upload image(s): ' + err.message);
     } finally {
       setIsUploading(false);
+      e.target.value = '';
     }
+  };
+
+  const handleAddImageUrl = () => {
+    const trimmed = imageUrlInput.trim();
+    if (!trimmed) return;
+    setFormData(prev => {
+      const currentGallery = Array.isArray(prev.galleryImages) ? prev.galleryImages : [];
+      const updatedGallery = [...currentGallery, trimmed];
+      const updatedMain = (!prev.mainImage || prev.mainImage.trim() === '') ? trimmed : prev.mainImage;
+      return {
+        ...prev,
+        galleryImages: updatedGallery,
+        mainImage: updatedMain
+      };
+    });
+    setImageUrlInput('');
+  };
+
+  const handleSetMainImage = (url) => {
+    setFormData(prev => ({
+      ...prev,
+      mainImage: url
+    }));
+  };
+
+  const handleRemoveImage = (indexToRemove) => {
+    setFormData(prev => {
+      const currentGallery = Array.isArray(prev.galleryImages) ? prev.galleryImages : [];
+      const removedUrl = currentGallery[indexToRemove];
+      const updatedGallery = currentGallery.filter((_, idx) => idx !== indexToRemove);
+      let updatedMain = prev.mainImage;
+      if (prev.mainImage === removedUrl) {
+        updatedMain = updatedGallery[0] || '';
+      }
+      return {
+        ...prev,
+        galleryImages: updatedGallery,
+        mainImage: updatedMain
+      };
+    });
   };
 
   useEffect(() => {
     if (product) {
+      const initialGallery = (product.galleryImages && product.galleryImages.length > 0)
+        ? product.galleryImages
+        : (product.mainImage ? [product.mainImage] : []);
+
       setFormData({
         ...product,
+        mainImage: product.mainImage || initialGallery[0] || '',
+        galleryImages: initialGallery,
         dimensions: product.dimensions || { length: 0, width: 0, height: 0 },
         packageDimensions: product.packageDimensions || { length: 0, width: 0, height: 0 },
         attributes: product.attributes || [],
@@ -630,43 +696,172 @@ export default function ProductFormModal({
 
             {/* SECTION 4: MEDIA & ASSETS */}
             {activeTab === 'media' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div className="grid-2">
-                  <div className="form-group">
-                    <label className="form-label">Main Primary Image</label>
-                    
-                    <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                      <input 
-                        type="text" 
-                        value={formData.mainImage} 
-                        onChange={(e) => setFormData({ ...formData, mainImage: e.target.value })}
-                        placeholder="https://images.unsplash.com/... or /uploads/..."
-                        className="form-input" 
-                        style={{ flex: 1 }}
-                      />
-                      <label className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                        <Upload size={14} />
-                        {isUploading ? 'Uploading...' : 'Upload File'}
-                        <input 
-                          type="file" 
-                          accept="image/*" 
-                          onChange={handleImageFileSelect} 
-                          style={{ display: 'none' }}
-                          disabled={isUploading}
-                        />
-                      </label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                
+                {/* Upload & Add Pictures Bar */}
+                <div style={{
+                  background: 'var(--card-bg)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-lg)',
+                  padding: '20px'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px', marginBottom: '16px' }}>
+                    <div>
+                      <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '4px' }}>
+                        Product Photos & Gallery ({formData.galleryImages?.length || 0} Images)
+                      </h4>
+                      <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                        Upload multiple images. Click <strong>⭐ Set Main Pic</strong> on any image to choose your primary product picture.
+                      </p>
                     </div>
 
-                    <div style={{ marginTop: '12px', width: '100%', height: '180px', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--border-color)', position: 'relative' }}>
-                      <img 
-                        src={formData.mainImage} 
-                        alt="Main product preview" 
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                        onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80'; }}
+                    {/* Upload Multiple Files Button */}
+                    <label className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                      <Upload size={16} />
+                      <span>{isUploading ? 'Uploading Pictures...' : 'Upload Photos (Multiple)'}</span>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        multiple
+                        onChange={handleImageFileSelect} 
+                        style={{ display: 'none' }}
+                        disabled={isUploading}
                       />
-                    </div>
+                    </label>
                   </div>
 
+                  {/* Add Image via URL */}
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input 
+                      type="text" 
+                      value={imageUrlInput} 
+                      onChange={(e) => setImageUrlInput(e.target.value)}
+                      placeholder="Paste Image URL (https://... or /uploads/...)"
+                      className="form-input" 
+                      style={{ flex: 1 }}
+                    />
+                    <button 
+                      type="button" 
+                      onClick={handleAddImageUrl}
+                      className="btn btn-secondary"
+                      disabled={!imageUrlInput.trim()}
+                    >
+                      <Plus size={16} />
+                      Add URL Photo
+                    </button>
+                  </div>
+                </div>
+
+                {/* Uploaded Product Photos Grid */}
+                <div>
+                  <div style={{ fontSize: '13px', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '12px' }}>
+                    All Product Pictures:
+                  </div>
+
+                  {(!formData.galleryImages || formData.galleryImages.length === 0) ? (
+                    <div style={{
+                      padding: '32px',
+                      textAlign: 'center',
+                      background: 'var(--card-bg)',
+                      border: '2px dashed var(--border-color)',
+                      borderRadius: 'var(--radius-lg)',
+                      color: 'var(--text-muted)'
+                    }}>
+                      <ImageIcon size={32} style={{ marginBottom: '8px', opacity: 0.5 }} />
+                      <p style={{ fontSize: '13px' }}>No product pictures uploaded yet. Click <strong>Upload Photos (Multiple)</strong> above to add pictures.</p>
+                    </div>
+                  ) : (
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+                      gap: '16px'
+                    }}>
+                      {formData.galleryImages.map((imgUrl, index) => {
+                        const isMain = formData.mainImage === imgUrl;
+
+                        return (
+                          <div 
+                            key={index}
+                            style={{
+                              background: 'var(--card-bg)',
+                              border: isMain ? '2px solid var(--accent-primary)' : '1px solid var(--border-color)',
+                              borderRadius: 'var(--radius-md)',
+                              overflow: 'hidden',
+                              display: 'flex',
+                              flexDirection: 'column',
+                              position: 'relative',
+                              boxShadow: isMain ? '0 0 12px rgba(99, 102, 241, 0.25)' : 'none',
+                              transition: 'all var(--transition-fast)'
+                            }}
+                          >
+                            {/* Main Pic Badge */}
+                            {isMain && (
+                              <div style={{
+                                position: 'absolute',
+                                top: '8px',
+                                left: '8px',
+                                background: 'var(--accent-primary)',
+                                color: '#ffffff',
+                                fontSize: '10px',
+                                fontWeight: '700',
+                                padding: '3px 8px',
+                                borderRadius: 'var(--radius-sm)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                zIndex: 2,
+                                boxShadow: '0 2px 6px rgba(0,0,0,0.3)'
+                              }}>
+                                <Star size={12} fill="#ffffff" /> Main Pic
+                              </div>
+                            )}
+
+                            {/* Image Thumbnail */}
+                            <div style={{ width: '100%', height: '140px', background: '#000', overflow: 'hidden', position: 'relative' }}>
+                              <img 
+                                src={imgUrl} 
+                                alt={`Product Photo ${index + 1}`}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80'; }}
+                              />
+                            </div>
+
+                            {/* Photo Actions Footer */}
+                            <div style={{ padding: '8px 10px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', background: 'var(--bg-secondary)' }}>
+                              {isMain ? (
+                                <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <Check size={14} /> Selected
+                                </span>
+                              ) : (
+                                <button 
+                                  type="button"
+                                  onClick={() => handleSetMainImage(imgUrl)}
+                                  className="btn btn-secondary btn-sm"
+                                  style={{ fontSize: '11px', padding: '4px 8px', gap: '4px' }}
+                                >
+                                  <Star size={12} /> Set Main Pic
+                                </button>
+                              )}
+
+                              <button 
+                                type="button"
+                                onClick={() => handleRemoveImage(index)}
+                                className="btn-icon"
+                                title="Remove photo"
+                                style={{ color: 'var(--danger)', padding: '4px' }}
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Additional Media Info */}
+                <div className="grid-2" style={{ marginTop: '8px' }}>
                   <div className="form-group">
                     <label className="form-label">Image Accessibility Alt Text</label>
                     <input 
@@ -676,19 +871,20 @@ export default function ProductFormModal({
                       placeholder="Descriptive text for screen readers"
                       className="form-input" 
                     />
-                    
-                    <div style={{ marginTop: '16px' }}>
-                      <label className="form-label">Video Demonstration URLs</label>
-                      <input 
-                        type="url" 
-                        value={formData.videoUrls[0] || ''} 
-                        onChange={(e) => setFormData({ ...formData, videoUrls: [e.target.value] })}
-                        placeholder="https://www.youtube.com/watch?v=..."
-                        className="form-input" 
-                      />
-                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Video Demonstration URL</label>
+                    <input 
+                      type="url" 
+                      value={formData.videoUrls[0] || ''} 
+                      onChange={(e) => setFormData({ ...formData, videoUrls: [e.target.value] })}
+                      placeholder="https://www.youtube.com/watch?v=..."
+                      className="form-input" 
+                    />
                   </div>
                 </div>
+
               </div>
             )}
 
