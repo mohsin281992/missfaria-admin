@@ -26,7 +26,7 @@ export default function CategoriesView({
 }) {
   const [newCatName, setNewCatName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'table'
+  const [viewMode, setViewMode] = useState('table'); // Default to table/list mode
 
   const handleAddSubmit = (e) => {
     e.preventDefault();
@@ -351,51 +351,86 @@ export default function CategoriesView({
           background: 'var(--card-bg)',
           border: '1px solid var(--border-color)',
           borderRadius: 'var(--radius-lg)',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          boxShadow: 'var(--shadow-sm)'
         }}>
           <table className="data-table">
             <thead>
               <tr>
                 <th>Category Name</th>
+                <th>Product Thumbnails</th>
                 <th>Total Products</th>
-                <th>Sample Products</th>
                 <th style={{ textAlign: 'right' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredCategories.map((cat) => {
                 const catProducts = products.filter(p => p.primaryCategory === cat);
+                const previewImages = catProducts.slice(0, 3).map(p => p.mainImage);
 
                 return (
                   <tr key={cat}>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <Tag size={16} color="var(--accent-primary)" />
-                        <span style={{ fontWeight: '600', color: 'var(--text-primary)' }}>{cat}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{
+                          width: '34px',
+                          height: '34px',
+                          borderRadius: 'var(--radius-md)',
+                          background: 'rgba(99, 102, 241, 0.1)',
+                          color: 'var(--accent-primary)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justify: 'center'
+                        }}>
+                          <Tag size={16} />
+                        </div>
+                        <div>
+                          <span style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '14px' }}>{cat}</span>
+                        </div>
                       </div>
                     </td>
                     <td>
-                      <span className="badge badge-neutral">
-                        {catProducts.length} Items
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        {previewImages.length > 0 ? (
+                          previewImages.map((imgSrc, idx) => (
+                            <img 
+                              key={idx} 
+                              src={imgSrc} 
+                              alt="thumb"
+                              style={{
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: 'var(--radius-sm)',
+                                objectFit: 'cover',
+                                border: '1px solid var(--border-color)'
+                              }}
+                              onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80'; }}
+                            />
+                          ))
+                        ) : (
+                          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>No products</span>
+                        )}
+                      </div>
+                    </td>
+                    <td>
+                      <span className="badge badge-info" style={{ fontSize: '12px', padding: '4px 10px' }}>
+                        {catProducts.length} {catProducts.length === 1 ? 'Product' : 'Products'}
                       </span>
                     </td>
-                    <td>
-                      <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                        {catProducts.slice(0, 2).map(p => p.title).join(', ') || 'None'}
-                        {catProducts.length > 2 ? ` +${catProducts.length - 2} more` : ''}
-                      </div>
-                    </td>
                     <td style={{ textAlign: 'right' }}>
-                      <div style={{ display: 'inline-flex', gap: '8px' }}>
+                      <div style={{ display: 'inline-flex', gap: '8px', alignItems: 'center' }}>
                         <button 
                           onClick={() => onNavigateToProducts(cat)}
                           className="btn btn-secondary btn-sm"
+                          style={{ gap: '6px' }}
                         >
-                          Show Products
+                          <span>Show Products</span>
+                          <ExternalLink size={14} />
                         </button>
                         <button 
                           onClick={() => onDeleteCategory(cat)}
                           className="btn-icon"
+                          title="Delete Category"
                           style={{ color: 'var(--danger)' }}
                         >
                           <Trash2 size={16} />
