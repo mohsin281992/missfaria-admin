@@ -3,6 +3,7 @@ import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import DashboardView from './views/DashboardView';
 import CatalogView from './views/CatalogView';
+import CategoriesView from './views/CategoriesView';
 import SalesView from './views/SalesView';
 import CustomersView from './views/CustomersView';
 import SettingsView from './views/SettingsView';
@@ -260,6 +261,21 @@ export default function App() {
               onEditProduct={handleOpenEditModal}
               onDeleteProduct={handleDeleteProduct}
               onDuplicateProduct={handleDuplicateProduct}
+            />
+          )}
+
+          {activeTab === 'categories' && (
+            <CategoriesView 
+              categories={categories}
+              products={products}
+              settings={settings}
+              onAddCategory={handleAddCategory}
+              onDeleteCategory={handleDeleteCategory}
+              onNavigateToProducts={(cat) => {
+                setSelectedCategory(cat);
+                setActiveTab('catalog');
+              }}
+              onEditProduct={handleOpenEditModal}
             />
           )}
 

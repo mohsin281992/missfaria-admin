@@ -160,22 +160,17 @@ export default function Sidebar({
                 </div>
               </button>
 
-              {/* Collapsible Submenu for Categories */}
+              {/* Collapsible Submenu under Catalog */}
               {isCatalogItem && isCatalogExpanded && (
                 <div style={{
-                  marginLeft: '20px',
-                  paddingLeft: '12px',
-                  borderLeft: '2px solid rgba(99, 102, 241, 0.3)',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '3px',
-                  margin: '4px 0 8px 24px'
+                  gap: '4px',
+                  margin: '4px 0 8px 18px',
+                  paddingLeft: '14px',
+                  borderLeft: '2px solid rgba(99, 102, 241, 0.3)'
                 }}>
-                  <div style={{ fontSize: '10px', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '4px 8px' }}>
-                    Categories Submenu
-                  </div>
-
-                  {/* All Categories Link */}
+                  {/* 1. Products Link */}
                   <button
                     onClick={() => {
                       setActiveTab('catalog');
@@ -185,90 +180,57 @@ export default function Sidebar({
                       display: 'flex',
                       alignItems: 'center',
                       justify: 'space-between',
-                      padding: '8px 10px',
-                      borderRadius: 'var(--radius-sm)',
-                      background: (activeTab === 'catalog' && selectedCategory === 'All') ? 'rgba(99, 102, 241, 0.2)' : 'transparent',
-                      color: (activeTab === 'catalog' && selectedCategory === 'All') ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                      padding: '9px 12px',
+                      borderRadius: 'var(--radius-md)',
+                      background: (activeTab === 'catalog') ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
+                      color: (activeTab === 'catalog') ? 'var(--accent-primary)' : 'var(--text-secondary)',
                       fontSize: '13px',
-                      fontWeight: (activeTab === 'catalog' && selectedCategory === 'All') ? '600' : '400',
-                      border: 'none',
+                      fontWeight: (activeTab === 'catalog') ? '600' : '500',
+                      border: '1px solid',
+                      borderColor: (activeTab === 'catalog') ? 'rgba(99, 102, 241, 0.3)' : 'transparent',
                       cursor: 'pointer',
                       textAlign: 'left',
                       transition: 'all var(--transition-fast)'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Layers size={14} color={(activeTab === 'catalog' && selectedCategory === 'All') ? 'var(--accent-primary)' : 'currentColor'} />
-                      <span>All Categories</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Package size={16} color={(activeTab === 'catalog') ? 'var(--accent-primary)' : 'currentColor'} />
+                      <span>Products</span>
                     </div>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    <span className="badge badge-neutral" style={{ fontSize: '10px', padding: '2px 6px' }}>
                       {products.length}
                     </span>
                   </button>
 
-                  {/* Category List */}
-                  {categories.map((cat) => {
-                    const count = products.filter(p => p.primaryCategory === cat).length;
-                    const isSelected = activeTab === 'catalog' && selectedCategory === cat;
-
-                    return (
-                      <button
-                        key={cat}
-                        onClick={() => {
-                          setActiveTab('catalog');
-                          if (setSelectedCategory) setSelectedCategory(cat);
-                        }}
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justify: 'space-between',
-                          padding: '8px 10px',
-                          borderRadius: 'var(--radius-sm)',
-                          background: isSelected ? 'rgba(99, 102, 241, 0.2)' : 'transparent',
-                          color: isSelected ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                          fontSize: '13px',
-                          fontWeight: isSelected ? '600' : '400',
-                          border: 'none',
-                          cursor: 'pointer',
-                          textAlign: 'left',
-                          transition: 'all var(--transition-fast)'
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
-                          <Tag size={13} color={isSelected ? 'var(--accent-primary)' : 'currentColor'} />
-                          <span style={{ whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{cat}</span>
-                        </div>
-                        <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                          {count}
-                        </span>
-                      </button>
-                    );
-                  })}
-
-                  {/* Add / Manage Category Button */}
+                  {/* 2. Categories Link */}
                   <button
                     onClick={() => {
-                      setActiveTab('catalog');
-                      if (onOpenCategoryManager) onOpenCategoryManager();
+                      setActiveTab('categories');
                     }}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '6px',
-                      padding: '8px 10px',
-                      marginTop: '4px',
-                      borderRadius: 'var(--radius-sm)',
-                      background: 'rgba(255, 255, 255, 0.04)',
-                      color: 'var(--accent-primary)',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      border: '1px stroke var(--border-color)',
+                      justify: 'space-between',
+                      padding: '9px 12px',
+                      borderRadius: 'var(--radius-md)',
+                      background: (activeTab === 'categories') ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
+                      color: (activeTab === 'categories') ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                      fontSize: '13px',
+                      fontWeight: (activeTab === 'categories') ? '600' : '500',
+                      border: '1px solid',
+                      borderColor: (activeTab === 'categories') ? 'rgba(99, 102, 241, 0.3)' : 'transparent',
                       cursor: 'pointer',
-                      textAlign: 'left'
+                      textAlign: 'left',
+                      transition: 'all var(--transition-fast)'
                     }}
                   >
-                    <FolderPlus size={14} />
-                    <span>+ Manage Categories</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Tag size={16} color={(activeTab === 'categories') ? 'var(--accent-primary)' : 'currentColor'} />
+                      <span>Categories</span>
+                    </div>
+                    <span className="badge badge-neutral" style={{ fontSize: '10px', padding: '2px 6px' }}>
+                      {categories.length}
+                    </span>
                   </button>
                 </div>
               )}

@@ -10,6 +10,7 @@ export default function Header({
   const titles = {
     dashboard: 'Store Overview & Analytics',
     catalog: 'Product Catalog Management',
+    categories: 'Category Management & Directory',
     sales: 'Orders & Sales Management',
     customers: 'Customer Directory',
     analytics: 'Performance & Revenue Reports',
