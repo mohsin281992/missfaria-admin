@@ -4,12 +4,8 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
-import { connectMongoDB } from './mongodb.js';
 
 dotenv.config();
-
-// Attempt MongoDB Connection
-connectMongoDB();
 
 import productsRouter from './routes/products.js';
 import categoriesRouter from './routes/categories.js';
