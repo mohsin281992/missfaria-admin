@@ -224,7 +224,7 @@ export default function ProductFormModal({
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content" style={{ maxWidth: '1000px' }}>
+      <div className="modal-content">
         {/* Header */}
         <div style={{
           padding: '20px 24px',
