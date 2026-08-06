@@ -20,7 +20,9 @@ import {
   Eye,
   Info,
   Upload,
-  Star
+  Star,
+  Palette,
+  Ruler
 } from 'lucide-react';
 import { uploadImageFile } from '../services/api';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatters';
@@ -173,6 +175,51 @@ export default function ProductFormModal({
     });
   };
 
+  const [colorInput, setColorInput] = useState('');
+  const [sizeInput, setSizeInput] = useState('');
+
+  // Extract or initialize color & size options from attributes
+  const colorAttr = formData.attributes?.find(a => a.name === 'Color') || { name: 'Color', options: ['Black', 'White', 'Red', 'Blue'] };
+  const sizeAttr = formData.attributes?.find(a => a.name === 'Size') || { name: 'Size', options: ['S', 'M', 'L', 'XL'] };
+
+  const updateAttribute = (attrName, options) => {
+    setFormData(prev => {
+      const currentAttrs = prev.attributes || [];
+      const attrExists = currentAttrs.some(a => a.name === attrName);
+      let newAttrs;
+      if (attrExists) {
+        newAttrs = currentAttrs.map(a => a.name === attrName ? { ...a, options } : a);
+      } else {
+        newAttrs = [...currentAttrs, { name: attrName, options }];
+      }
+      return { ...prev, attributes: newAttrs };
+    });
+  };
+
+  const handleAddColor = (colName) => {
+    const trimmed = colName.trim();
+    if (!trimmed || colorAttr.options.includes(trimmed)) return;
+    const updatedOptions = [...colorAttr.options, trimmed];
+    updateAttribute('Color', updatedOptions);
+  };
+
+  const handleRemoveColor = (colName) => {
+    const updatedOptions = colorAttr.options.filter(c => c !== colName);
+    updateAttribute('Color', updatedOptions);
+  };
+
+  const handleAddSize = (szName) => {
+    const trimmed = szName.trim();
+    if (!trimmed || sizeAttr.options.includes(trimmed)) return;
+    const updatedOptions = [...sizeAttr.options, trimmed];
+    updateAttribute('Size', updatedOptions);
+  };
+
+  const handleRemoveSize = (szName) => {
+    const updatedOptions = sizeAttr.options.filter(s => s !== szName);
+    updateAttribute('Size', updatedOptions);
+  };
+
   useEffect(() => {
     if (product) {
       const initialGallery = (product.galleryImages && product.galleryImages.length > 0)
@@ -239,35 +286,56 @@ export default function ProductFormModal({
 
   // Generate Variation Matrix
   const generateVariationMatrix = () => {
-    if (formData.attributes.length === 0) return;
+    const colors = colorAttr.options || [];
+    const sizes = sizeAttr.options || [];
     
-    // Cartesion Product of attribute options
-    const cartesian = (args) => {
-      const r = [];
-      const max = args.length - 1;
-      function helper(arr, i) {
-        for (let j = 0, l = args[i].options.length; j < l; j++) {
-          const a = arr.slice(0);
-          a.push({ name: args[i].name, option: args[i].options[j] });
-          if (i === max) r.push(a);
-          else helper(a, i + 1);
-        }
-      }
-      helper([], 0);
-      return r;
-    };
+    if (colors.length === 0 && sizes.length === 0) {
+      alert('Please add at least one Color or Size option to generate variations.');
+      return;
+    }
 
-    const combinations = cartesian(formData.attributes);
-    const newVariations = combinations.map((comb, index) => {
-      const combinationName = comb.map(c => c.option).join(' / ');
-      return {
-        id: `var-new-${Date.now()}-${index}`,
-        sku: `${formData.sku || 'SKU'}-${comb.map(c => c.option.substring(0, 3).toUpperCase()).join('-')}`,
-        combinationName,
-        price: currentSellPrice,
-        stock: formData.stockQuantity || 10
-      };
-    });
+    const newVariations = [];
+    const baseSku = formData.sku || 'PRD';
+
+    if (colors.length > 0 && sizes.length > 0) {
+      colors.forEach(col => {
+        sizes.forEach(sz => {
+          newVariations.push({
+            id: `var-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+            combinationName: `${col} / ${sz}`,
+            color: col,
+            size: sz,
+            sku: `${baseSku}-${col.substring(0, 3).toUpperCase()}-${sz.toUpperCase()}`,
+            price: currentSellPrice,
+            stock: formData.stockQuantity || 10
+          });
+        });
+      });
+    } else if (colors.length > 0) {
+      colors.forEach(col => {
+        newVariations.push({
+          id: `var-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+          combinationName: col,
+          color: col,
+          size: '',
+          sku: `${baseSku}-${col.substring(0, 3).toUpperCase()}`,
+          price: currentSellPrice,
+          stock: formData.stockQuantity || 10
+        });
+      });
+    } else if (sizes.length > 0) {
+      sizes.forEach(sz => {
+        newVariations.push({
+          id: `var-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+          combinationName: sz,
+          color: '',
+          size: sz,
+          sku: `${baseSku}-${sz.toUpperCase()}`,
+          price: currentSellPrice,
+          stock: formData.stockQuantity || 10
+        });
+      });
+    }
 
     setFormData(prev => ({ ...prev, variations: newVariations }));
   };
@@ -573,74 +641,250 @@ export default function ProductFormModal({
 
             {/* SECTION 3: PHYSICAL ATTRIBUTES & VARIATIONS */}
             {activeTab === 'variations' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div className="grid-3">
-                  <div className="form-group">
-                    <label className="form-label">Unit System</label>
-                    <select 
-                      value={formData.unitType}
-                      onChange={(e) => setFormData({ ...formData, unitType: e.target.value })}
-                      className="form-select"
-                    >
-                      <option value="metric">Metric (kg / cm)</option>
-                      <option value="imperial">Imperial (lbs / in)</option>
-                    </select>
-                  </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                
+                {/* Physical Specifications */}
+                <div style={{
+                  background: 'var(--card-bg)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-lg)',
+                  padding: '20px'
+                }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '14px' }}>
+                    Physical Specifications & Dimensions
+                  </h4>
+                  <div className="grid-3">
+                    <div className="form-group">
+                      <label className="form-label">Unit System</label>
+                      <select 
+                        value={formData.unitType}
+                        onChange={(e) => setFormData({ ...formData, unitType: e.target.value })}
+                        className="form-select"
+                      >
+                        <option value="metric">Metric (kg / cm)</option>
+                        <option value="imperial">Imperial (lbs / in)</option>
+                      </select>
+                    </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Weight ({formData.unitType === 'metric' ? 'kg' : 'lbs'})</label>
-                    <input 
-                      type="number" 
-                      step="0.01"
-                      value={formData.weight} 
-                      onChange={(e) => setFormData({ ...formData, weight: parseFloat(e.target.value) || 0 })}
-                      className="form-input" 
-                    />
-                  </div>
+                    <div className="form-group">
+                      <label className="form-label">Weight ({formData.unitType === 'metric' ? 'kg' : 'lbs'})</label>
+                      <input 
+                        type="number" 
+                        step="0.01"
+                        value={formData.weight} 
+                        onChange={(e) => setFormData({ ...formData, weight: parseFloat(e.target.value) || 0 })}
+                        className="form-input" 
+                      />
+                    </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Dimensions (L x W x H in {formData.unitType === 'metric' ? 'cm' : 'in'})</label>
-                    <div style={{ display: 'flex', gap: '6px' }}>
-                      <input 
-                        type="number" 
-                        placeholder="L"
-                        value={formData.dimensions.length} 
-                        onChange={(e) => setFormData({ ...formData, dimensions: { ...formData.dimensions, length: parseFloat(e.target.value) || 0 } })}
-                        className="form-input" 
-                      />
-                      <input 
-                        type="number" 
-                        placeholder="W"
-                        value={formData.dimensions.width} 
-                        onChange={(e) => setFormData({ ...formData, dimensions: { ...formData.dimensions, width: parseFloat(e.target.value) || 0 } })}
-                        className="form-input" 
-                      />
-                      <input 
-                        type="number" 
-                        placeholder="H"
-                        value={formData.dimensions.height} 
-                        onChange={(e) => setFormData({ ...formData, dimensions: { ...formData.dimensions, height: parseFloat(e.target.value) || 0 } })}
-                        className="form-input" 
-                      />
+                    <div className="form-group">
+                      <label className="form-label">Dimensions (L x W x H in {formData.unitType === 'metric' ? 'cm' : 'in'})</label>
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <input 
+                          type="number" 
+                          placeholder="L"
+                          value={formData.dimensions.length} 
+                          onChange={(e) => setFormData({ ...formData, dimensions: { ...formData.dimensions, length: parseFloat(e.target.value) || 0 } })}
+                          className="form-input" 
+                        />
+                        <input 
+                          type="number" 
+                          placeholder="W"
+                          value={formData.dimensions.width} 
+                          onChange={(e) => setFormData({ ...formData, dimensions: { ...formData.dimensions, width: parseFloat(e.target.value) || 0 } })}
+                          className="form-input" 
+                        />
+                        <input 
+                          type="number" 
+                          placeholder="H"
+                          value={formData.dimensions.height} 
+                          onChange={(e) => setFormData({ ...formData, dimensions: { ...formData.dimensions, height: parseFloat(e.target.value) || 0 } })}
+                          className="form-input" 
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Attributes & Variation Matrix Generator */}
-                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                    <div>
-                      <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-primary)' }}>Variation Combinations Matrix</h4>
-                      <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Generate pricing and stock for combinations (Color, Size, Material)</p>
+                {/* Color & Size Attributes Manager */}
+                <div style={{
+                  background: 'var(--card-bg)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-lg)',
+                  padding: '20px'
+                }}>
+                  <div style={{ marginBottom: '16px' }}>
+                    <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '4px' }}>
+                      Color & Size Product Attributes
+                    </h4>
+                    <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                      Configure available colors and sizes for this product, then generate the variations matrix below.
+                    </p>
+                  </div>
+
+                  <div className="grid-2">
+                    {/* Color Attribute Setup */}
+                    <div style={{
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 'var(--radius-md)',
+                      padding: '16px'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                        <Palette size={18} color="var(--accent-primary)" />
+                        <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-primary)' }}>Color Options</h5>
+                      </div>
+
+                      {/* Color Pills List */}
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
+                        {colorAttr.options.map(col => (
+                          <span 
+                            key={col}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '4px 10px',
+                              borderRadius: '20px',
+                              background: 'rgba(99, 102, 241, 0.15)',
+                              color: 'var(--accent-primary)',
+                              fontSize: '12px',
+                              fontWeight: '600'
+                            }}
+                          >
+                            <span>{col}</span>
+                            <button 
+                              type="button"
+                              onClick={() => handleRemoveColor(col)}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger)', padding: 0 }}
+                            >
+                              <X size={12} />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Quick Color Add Input */}
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <input 
+                          type="text"
+                          placeholder="Add Color (e.g. Red, Navy)"
+                          value={colorInput}
+                          onChange={(e) => setColorInput(e.target.value)}
+                          className="form-input"
+                          style={{ fontSize: '12px', height: '34px' }}
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => {
+                            if (colorInput.trim()) {
+                              handleAddColor(colorInput.trim());
+                              setColorInput('');
+                            }
+                          }}
+                          className="btn btn-secondary btn-sm"
+                          disabled={!colorInput.trim()}
+                        >
+                          <Plus size={14} /> Add Color
+                        </button>
+                      </div>
                     </div>
-                    <button type="button" className="btn btn-secondary btn-sm" onClick={generateVariationMatrix}>
-                      <Sparkles size={14} /> Generate Combinations
+
+                    {/* Size Attribute Setup */}
+                    <div style={{
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: 'var(--radius-md)',
+                      padding: '16px'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                        <Ruler size={18} color="var(--accent-primary)" />
+                        <h5 style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-primary)' }}>Size Options</h5>
+                      </div>
+
+                      {/* Size Pills List */}
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '12px' }}>
+                        {sizeAttr.options.map(sz => (
+                          <span 
+                            key={sz}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '4px 10px',
+                              borderRadius: '20px',
+                              background: 'rgba(16, 185, 129, 0.15)',
+                              color: '#10b981',
+                              fontSize: '12px',
+                              fontWeight: '600'
+                            }}
+                          >
+                            <span>{sz}</span>
+                            <button 
+                              type="button"
+                              onClick={() => handleRemoveSize(sz)}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--danger)', padding: 0 }}
+                            >
+                              <X size={12} />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Quick Size Add Input */}
+                      <div style={{ display: 'flex', gap: '6px' }}>
+                        <input 
+                          type="text"
+                          placeholder="Add Size (e.g. XL, 42)"
+                          value={sizeInput}
+                          onChange={(e) => setSizeInput(e.target.value)}
+                          className="form-input"
+                          style={{ fontSize: '12px', height: '34px' }}
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => {
+                            if (sizeInput.trim()) {
+                              handleAddSize(sizeInput.trim());
+                              setSizeInput('');
+                            }
+                          }}
+                          className="btn btn-secondary btn-sm"
+                          disabled={!sizeInput.trim()}
+                        >
+                          <Plus size={14} /> Add Size
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Variations Matrix & Grid */}
+                <div style={{
+                  background: 'var(--card-bg)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-lg)',
+                  padding: '20px'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
+                    <div>
+                      <h4 style={{ fontSize: '15px', fontWeight: '700', color: 'var(--text-primary)' }}>
+                        Variation Combinations & Stock ({formData.variations.length} Variants)
+                      </h4>
+                      <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                        Individual SKU, Price, and Inventory stock levels for each Color & Size combination.
+                      </p>
+                    </div>
+
+                    <button type="button" className="btn btn-primary btn-sm" onClick={generateVariationMatrix}>
+                      <Sparkles size={14} /> Generate Color & Size Combinations
                     </button>
                   </div>
 
                   {formData.variations.length === 0 ? (
-                    <div style={{ padding: '24px', textTransform: 'center', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
-                      No variations generated yet. Click "Generate Combinations" to build variant pricing grid.
+                    <div style={{ padding: '32px', textAlign: 'center', background: 'var(--bg-secondary)', border: '2px dashed var(--border-color)', borderRadius: 'var(--radius-md)', color: 'var(--text-muted)', fontSize: '13px' }}>
+                      <Sparkles size={24} style={{ marginBottom: '8px', opacity: 0.5 }} />
+                      <p>No variations generated yet. Click <strong>Generate Color & Size Combinations</strong> above to build the variant matrix.</p>
                     </div>
                   ) : (
                     <div className="table-container">
@@ -648,26 +892,41 @@ export default function ProductFormModal({
                         <thead>
                           <tr>
                             <th>Variant Combination</th>
-                            <th>SKU</th>
+                            <th>Color</th>
+                            <th>Size</th>
+                            <th>Variant SKU</th>
                             <th>Price ({symbol})</th>
-                            <th>Stock</th>
+                            <th>Stock Quantity</th>
+                            <th style={{ textAlign: 'right' }}>Action</th>
                           </tr>
                         </thead>
                         <tbody>
                           {formData.variations.map((v, i) => (
                             <tr key={v.id || i}>
-                              <td style={{ fontWeight: '600' }}>{v.combinationName || v.color || 'Variant'}</td>
+                              <td style={{ fontWeight: '700', color: 'var(--text-primary)' }}>
+                                {v.combinationName || `${v.color || ''} ${v.size ? `/ ${v.size}` : ''}`}
+                              </td>
+                              <td>
+                                {v.color ? (
+                                  <span className="badge badge-info" style={{ fontSize: '11px' }}>{v.color}</span>
+                                ) : '-'}
+                              </td>
+                              <td>
+                                {v.size ? (
+                                  <span className="badge badge-neutral" style={{ fontSize: '11px' }}>{v.size}</span>
+                                ) : '-'}
+                              </td>
                               <td>
                                 <input 
                                   type="text" 
-                                  value={v.sku} 
+                                  value={v.sku || ''} 
                                   onChange={(e) => {
                                     const updated = [...formData.variations];
                                     updated[i].sku = e.target.value;
                                     setFormData({ ...formData, variations: updated });
                                   }}
                                   className="form-input" 
-                                  style={{ padding: '4px 8px', height: '30px', fontSize: '12px' }}
+                                  style={{ padding: '4px 8px', height: '32px', fontSize: '12px', fontFamily: 'monospace' }}
                                 />
                               </td>
                               <td>
@@ -681,7 +940,7 @@ export default function ProductFormModal({
                                     setFormData({ ...formData, variations: updated });
                                   }}
                                   className="form-input" 
-                                  style={{ padding: '4px 8px', height: '30px', fontSize: '12px', width: '90px' }}
+                                  style={{ padding: '4px 8px', height: '32px', fontSize: '12px', width: '100px' }}
                                 />
                               </td>
                               <td>
@@ -694,8 +953,22 @@ export default function ProductFormModal({
                                     setFormData({ ...formData, variations: updated });
                                   }}
                                   className="form-input" 
-                                  style={{ padding: '4px 8px', height: '30px', fontSize: '12px', width: '80px' }}
+                                  style={{ padding: '4px 8px', height: '32px', fontSize: '12px', width: '90px' }}
                                 />
+                              </td>
+                              <td style={{ textAlign: 'right' }}>
+                                <button 
+                                  type="button" 
+                                  onClick={() => {
+                                    const updated = formData.variations.filter((_, idx) => idx !== i);
+                                    setFormData({ ...formData, variations: updated });
+                                  }}
+                                  className="btn-icon"
+                                  title="Delete Variation"
+                                  style={{ color: 'var(--danger)', padding: '4px' }}
+                                >
+                                  <Trash2 size={16} />
+                                </button>
                               </td>
                             </tr>
                           ))}
@@ -704,6 +977,7 @@ export default function ProductFormModal({
                     </div>
                   )}
                 </div>
+
               </div>
             )}
 
