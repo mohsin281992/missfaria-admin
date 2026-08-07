@@ -22,7 +22,9 @@ import {
   Upload,
   Star,
   Palette,
-  Ruler
+  Ruler,
+  ChevronRight,
+  ChevronLeft
 } from 'lucide-react';
 import { uploadImageFile } from '../services/api';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatters';
@@ -1421,33 +1423,85 @@ export default function ProductFormModal({
           </div>
 
           {/* Modal Footer Controls */}
-          <div style={{
-            padding: '16px 24px',
-            borderTop: '1px solid var(--border-color)',
-            background: 'var(--bg-secondary)',
-            display: 'flex',
-            alignItems: 'center',
-            justify: 'space-between'
-          }}>
-            <button type="button" className="btn btn-secondary" onClick={onClose}>
-              Cancel
-            </button>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button type="submit" className="btn btn-primary" disabled={isSaving || isUploading}>
-                {isSaving ? (
-                  <>
-                    <RefreshCw size={18} className="spin" style={{ animation: 'spin 1s linear infinite' }} />
-                    Saving & Publishing...
-                  </>
-                ) : (
-                  <>
-                    <Save size={18} />
-                    {isEditing ? 'Update Product' : 'Save & Publish Product'}
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
+          {(() => {
+            const tabOrder = ['core', 'pricing', 'variations', 'media', 'categorization', 'seo', 'shipping', 'status'];
+            const currentIdx = tabOrder.indexOf(activeTab);
+            const isFirstStep = currentIdx <= 0;
+            const isLastStep = currentIdx === tabOrder.length - 1;
+
+            const handleNext = (e) => {
+              e.preventDefault();
+              if (currentIdx < tabOrder.length - 1) {
+                setActiveTab(tabOrder[currentIdx + 1]);
+              }
+            };
+
+            const handleBack = (e) => {
+              e.preventDefault();
+              if (currentIdx > 0) {
+                setActiveTab(tabOrder[currentIdx - 1]);
+              }
+            };
+
+            return (
+              <div style={{
+                padding: '16px 24px',
+                borderTop: '1px solid var(--border-color)',
+                background: 'var(--bg-secondary)',
+                display: 'flex',
+                alignItems: 'center',
+                justify: 'space-between'
+              }}>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                  <button type="button" className="btn btn-secondary" onClick={onClose}>
+                    Cancel
+                  </button>
+                  {!isFirstStep && (
+                    <button type="button" className="btn btn-secondary" onClick={handleBack}>
+                      <ChevronLeft size={18} /> Previous Step
+                    </button>
+                  )}
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>
+                    Step {currentIdx + 1} of 8
+                  </span>
+
+                  {!isLastStep ? (
+                    <button 
+                      type="button" 
+                      className="btn btn-primary" 
+                      onClick={handleNext}
+                      style={{ minWidth: '130px', justifyContent: 'center' }}
+                    >
+                      Next Step <ChevronRight size={18} />
+                    </button>
+                  ) : (
+                    <button 
+                      type="submit" 
+                      className="btn btn-primary" 
+                      disabled={isSaving || isUploading}
+                      style={{ background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', borderColor: '#10b981' }}
+                    >
+                      {isSaving ? (
+                        <>
+                          <RefreshCw size={18} className="spin" style={{ animation: 'spin 1s linear infinite' }} />
+                          Saving & Publishing...
+                        </>
+                      ) : (
+                        <>
+                          <Save size={18} />
+                          {isEditing ? 'Update Product' : 'Save & Publish Product'}
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
+
         </form>
       </div>
     </div>
