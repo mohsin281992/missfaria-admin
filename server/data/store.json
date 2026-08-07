@@ -698,7 +698,7 @@
   "announcementBar": {
     "id": 1,
     "enabled": true,
-    "tickerText": "🚀 Summer Mega Sale! Enjoy up to 50% OFF on all premium tech accessories & outerwear. Free express shipping on orders over $100! Use Promo Code: FARIA50",
+    "tickerText": "🚀 Summer Mega Sale! Enjoy up to 50% OFF on all premium tech accessories & outerwear. Free express shipping on orders over PKR10,000! Use Promo Code: FARIA50",
     "scrollSpeed": "normal",
     "bgColor": "#4f46e5",
     "textColor": "#ffffff",
@@ -708,7 +708,7 @@
     "rightBadgeText": "LIMITED TIME",
     "rightLinkText": "Explore Offers",
     "rightLinkUrl": "/catalog",
-    "updatedAt": "2026-08-07T15:58:38.552Z"
+    "updatedAt": "2026-08-07T16:28:18.969Z"
   },
   "trustBadges": [
     {

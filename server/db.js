@@ -76,15 +76,19 @@ export function getStore() {
 import { syncStoreToSupabase } from './supabase.js';
 
 // Save database to store.json and sync to Supabase
-export function saveStore(data) {
+export async function saveStore(data) {
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
   } catch (error) {
     console.error('Error saving store.json:', error);
   }
 
-  // Trigger Supabase async synchronization
-  syncStoreToSupabase(data).catch(err => {
+  // Await Supabase sync to ensure Vercel serverless functions complete database persistence before returning response
+  try {
+    return await syncStoreToSupabase(data);
+  } catch (err) {
     console.warn('Supabase auto-sync failed:', err.message);
-  });
+    return { success: false, error: err.message };
+  }
 }
+
