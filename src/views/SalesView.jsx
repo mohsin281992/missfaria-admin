@@ -159,7 +159,7 @@ export default function SalesView({ orders, settings, onUpdateOrderStatus, onDel
       {/* Interactive Order Details Modal */}
       {selectedOrder && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-dialog">
             <div style={{
               padding: '20px 24px',
               borderBottom: '1px solid var(--border-color)',

@@ -14,6 +14,7 @@ import customersRouter from './routes/customers.js';
 import settingsRouter from './routes/settings.js';
 import analyticsRouter from './routes/analytics.js';
 import uploadRouter from './routes/upload.js';
+import marketingRouter from './routes/marketing.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -53,16 +54,30 @@ app.use('/api/customers', customersRouter);
 app.use('/api/settings', settingsRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/upload', uploadRouter);
+app.use('/api/marketing', marketingRouter);
+
+
+import { getStore } from './db.js';
+import { syncStoreToSupabase } from './supabase.js';
 
 // Start server if not running in Vercel serverless environment
 if (!process.env.VERCEL) {
-  app.listen(PORT, () => {
+  app.listen(PORT, async () => {
     console.log(`==================================================`);
     console.log(`🚀 Node.js Backend Server running on port ${PORT}`);
     console.log(`📡 API Base URL: http://localhost:${PORT}/api`);
     console.log(`🖼️ Uploads URL:  http://localhost:${PORT}/uploads`);
     console.log(`==================================================`);
+    
+    // Attempt auto-syncing local database store to Supabase on server start
+    const syncRes = await syncStoreToSupabase(getStore());
+    if (syncRes.success) {
+      console.log('⚡ All data successfully synced & live on Supabase!');
+    } else {
+      console.log('ℹ️ Supabase sync status:', syncRes.reason || syncRes.details || syncRes.error);
+    }
   });
 }
+
 
 export default app;

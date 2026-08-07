@@ -1,5 +1,6 @@
 import express from 'express';
 import { getStore, saveStore } from '../db.js';
+import { deleteCategoryFromSupabase } from '../supabase.js';
 
 const router = express.Router();
 
@@ -34,8 +35,10 @@ router.delete('/:name', (req, res) => {
 
   store.categories = store.categories.filter(c => c !== categoryName);
   saveStore(store);
+  deleteCategoryFromSupabase(categoryName);
 
   res.json(store.categories);
 });
 
 export default router;
+

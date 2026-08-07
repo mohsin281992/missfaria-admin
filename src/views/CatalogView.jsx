@@ -398,7 +398,7 @@ export default function CatalogView({
       {/* Category Management Modal */}
       {isCategoryModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-dialog">
             <div style={{
               padding: '18px 24px',
               borderBottom: '1px solid var(--border-color)',

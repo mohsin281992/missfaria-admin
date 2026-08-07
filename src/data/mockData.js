@@ -376,3 +376,180 @@ export const defaultSettings = {
   autoGenerateSKU: true,
   theme: 'light'
 };
+
+export const defaultAnnouncementBar = {
+  id: 1,
+  enabled: true,
+  tickerText: '🚀 Summer Mega Sale! Enjoy up to 50% OFF on all premium tech accessories & outerwear. Free express shipping on orders over $100! Use Promo Code: FARIA50',
+  scrollSpeed: 'normal', // 'slow', 'normal', 'fast'
+  bgColor: '#4f46e5',
+  textColor: '#ffffff',
+  fontSize: 13,
+  enableRightDetails: true,
+  rightDetailText: '📞 24/7 Support: +1 (800) 555-0199',
+  rightBadgeText: 'LIMITED TIME',
+  rightLinkText: 'Explore Offers',
+  rightLinkUrl: '/catalog'
+};
+
+export const defaultTrustBadges = [
+  {
+    id: 'tb-1',
+    title: 'Free Worldwide Express Shipping',
+    subtitle: 'On all orders above $100 minimum threshold',
+    icon: 'Truck',
+    iconColor: '#6366f1',
+    bgColor: 'rgba(99, 102, 241, 0.12)',
+    active: true,
+    position: 1
+  },
+  {
+    id: 'tb-2',
+    title: '30-Day Money Back Guarantee',
+    subtitle: 'Hassle-free 100% full refund policy',
+    icon: 'ShieldCheck',
+    iconColor: '#10b981',
+    bgColor: 'rgba(16, 185, 129, 0.12)',
+    active: true,
+    position: 2
+  },
+  {
+    id: 'tb-3',
+    title: '100% Encrypted SSL Payments',
+    subtitle: 'Bank-grade 256-bit secure checkout',
+    icon: 'Lock',
+    iconColor: '#06b6d4',
+    bgColor: 'rgba(6, 182, 212, 0.12)',
+    active: true,
+    position: 3
+  },
+  {
+    id: 'tb-4',
+    title: '24/7 Dedicated Live Support',
+    subtitle: 'Instant phone, email & live chat assistance',
+    icon: 'Headphones',
+    iconColor: '#f59e0b',
+    bgColor: 'rgba(245, 158, 11, 0.12)',
+    active: true,
+    position: 4
+  }
+];
+
+export const defaultBundleOffers = [
+  {
+    id: 'bnd-1',
+    title: 'Ultimate Audio & Fitness Starter Pack',
+    description: 'Get the AuraPro Wireless Noise-Canceling Headphones + Chronos Smart Fitness Watch together and save big!',
+    productIds: ['prod-1', 'prod-2'],
+    discountType: 'percentage', // 'percentage', 'fixed', 'override'
+    discountValue: 15,
+    bundlePrice: 356.98,
+    badge: 'POPULAR BUNDLE',
+    active: true,
+    createdAt: '2026-08-01'
+  },
+  {
+    id: 'bnd-2',
+    title: 'Pro Workstation Ergonomic Duo',
+    description: 'Combine KeyMech RGB Mechanical Keyboard + ErgoMaster Pro Mesh Chair for max productivity.',
+    productIds: ['prod-4', 'prod-5'],
+    discountType: 'fixed',
+    discountValue: 50,
+    bundlePrice: 428.99,
+    badge: 'SAVE $50 NOW',
+    active: true,
+    createdAt: '2026-08-03'
+  }
+];
+
+export const defaultStockCounters = {
+  id: 1,
+  enableCountdown: true,
+  flashSaleTitle: '⚡ Summer Flash Sale Ends Soon!',
+  flashSaleEnd: '2026-08-31T23:59:59',
+  enableScarcityCounter: true,
+  lowStockThreshold: 10,
+  urgencyTextTemplate: '🔥 Hurry! Only {stock} units remaining in stock. Order now before sold out!',
+  progressBarColor: '#ef4444'
+};
+
+export const defaultFaqs = [
+  {
+    id: 'faq-1',
+    question: 'How long does standard shipping take?',
+    answer: 'Standard domestic delivery takes 2 to 4 business days. International express shipping typically delivers within 5 to 7 business days.',
+    category: 'Shipping & Delivery',
+    active: true,
+    position: 1
+  },
+  {
+    id: 'faq-2',
+    question: 'What is your return & refund policy?',
+    answer: 'We offer a 30-day money back guarantee on all unused products in original packaging. Contact support to generate a prepaid return label.',
+    category: 'Returns & Refunds',
+    active: true,
+    position: 2
+  },
+  {
+    id: 'faq-3',
+    question: 'Are your electronic products covered under warranty?',
+    answer: 'Yes! All electronic gear including headphones, smartwatches, and keyboards come with an official 1-year hardware warranty.',
+    category: 'Warranty & Support',
+    active: true,
+    position: 3
+  },
+  {
+    id: 'faq-4',
+    question: 'Which payment methods do you accept?',
+    answer: 'We support Visa, MasterCard, American Express, PayPal, Apple Pay, Google Pay, and encrypted bank transfer options.',
+    category: 'Payments',
+    active: true,
+    position: 4
+  }
+];
+
+export const defaultReviews = [
+  {
+    id: 'rev-1',
+    productId: 'prod-1',
+    productTitle: 'AuraPro Wireless Noise-Canceling Headphones',
+    reviewerName: 'Marcus Vance',
+    reviewerEmail: 'm.vance@example.com',
+    rating: 5,
+    title: 'Mind-blowing Noise Cancellation!',
+    comment: 'The active noise cancellation on the AuraPro is genuinely unreal. I use them on flights and in busy coffee shops. Battery lasts days!',
+    status: 'Approved',
+    verified: true,
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80',
+    date: '2026-08-04'
+  },
+  {
+    id: 'rev-2',
+    productId: 'prod-2',
+    productTitle: 'Chronos Ultra Smart Fitness Watch',
+    reviewerName: 'Sophia Reynolds',
+    reviewerEmail: 'sophia.r@example.com',
+    rating: 5,
+    title: 'Sleek AMOLED screen & accurate GPS',
+    comment: 'Love the heart rate monitoring and build quality. The battery easily lasts over 12 days on a single charge!',
+    status: 'Approved',
+    verified: true,
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80',
+    date: '2026-08-05'
+  },
+  {
+    id: 'rev-3',
+    productId: 'prod-4',
+    productTitle: 'KeyMech Wireless RGB Mechanical Keyboard',
+    reviewerName: 'David Chen',
+    reviewerEmail: 'dchen88@example.com',
+    rating: 4,
+    title: 'Fantastic tactile typing experience',
+    comment: 'Key switches feel buttery smooth out of the box. RGB customization is great and battery life is top notch.',
+    status: 'Approved',
+    verified: true,
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80',
+    date: '2026-08-06'
+  }
+];
+

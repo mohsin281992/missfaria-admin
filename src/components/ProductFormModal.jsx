@@ -103,18 +103,15 @@ export default function ProductFormModal({
   const [isUploading, setIsUploading] = useState(false);
   const [imageUrlInput, setImageUrlInput] = useState('');
 
+  const [isSaving, setIsSaving] = useState(false);
+
   const handleImageFileSelect = async (e) => {
     const files = Array.from(e.target.files || []);
     if (!files.length) return;
     try {
       setIsUploading(true);
-      const newUrls = [];
-      for (const file of files) {
-        const data = await uploadImageFile(file);
-        if (data && data.url) {
-          newUrls.push(data.url);
-        }
-      }
+      const results = await Promise.all(files.map(file => uploadImageFile(file).catch(() => null)));
+      const newUrls = results.filter(r => r && r.url).map(r => r.url);
       if (newUrls.length > 0) {
         setFormData(prev => {
           const currentGallery = Array.isArray(prev.galleryImages) ? prev.galleryImages : [];
@@ -340,9 +337,15 @@ export default function ProductFormModal({
     setFormData(prev => ({ ...prev, variations: newVariations }));
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
-    onSave(formData);
+    if (isSaving) return;
+    setIsSaving(true);
+    try {
+      await onSave(formData);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const tabs = [
@@ -1408,9 +1411,18 @@ export default function ProductFormModal({
               Cancel
             </button>
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button type="submit" className="btn btn-primary">
-                <Save size={18} />
-                {isEditing ? 'Update Product' : 'Save & Publish Product'}
+              <button type="submit" className="btn btn-primary" disabled={isSaving || isUploading}>
+                {isSaving ? (
+                  <>
+                    <RefreshCw size={18} className="spin" style={{ animation: 'spin 1s linear infinite' }} />
+                    Saving & Publishing...
+                  </>
+                ) : (
+                  <>
+                    <Save size={18} />
+                    {isEditing ? 'Update Product' : 'Save & Publish Product'}
+                  </>
+                )}
               </button>
             </div>
           </div>

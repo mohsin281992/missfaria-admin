@@ -1,7 +1,19 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { initialProducts, initialOrders, initialCustomers, categoryList, defaultSettings } from '../src/data/mockData.js';
+import { 
+  initialProducts, 
+  initialOrders, 
+  initialCustomers, 
+  categoryList, 
+  defaultSettings,
+  defaultAnnouncementBar,
+  defaultTrustBadges,
+  defaultBundleOffers,
+  defaultStockCounters,
+  defaultFaqs,
+  defaultReviews
+} from '../src/data/mockData.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,8 +35,15 @@ const initialData = {
   categories: categoryList,
   orders: initialOrders,
   customers: initialCustomers,
-  settings: defaultSettings
+  settings: defaultSettings,
+  announcementBar: defaultAnnouncementBar,
+  trustBadges: defaultTrustBadges,
+  bundleOffers: defaultBundleOffers,
+  stockCounters: defaultStockCounters,
+  faqs: defaultFaqs,
+  reviews: defaultReviews
 };
+
 
 // Read database from store.json
 export function getStore() {
@@ -34,7 +53,20 @@ export function getStore() {
       return initialData;
     }
     const raw = fs.readFileSync(DB_FILE, 'utf-8');
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+
+    // Merge missing initial defaults if store.json was created before marketing modules
+    let modified = false;
+    for (const key of Object.keys(initialData)) {
+      if (parsed[key] === undefined) {
+        parsed[key] = initialData[key];
+        modified = true;
+      }
+    }
+    if (modified) {
+      saveStore(parsed);
+    }
+    return parsed;
   } catch (error) {
     console.error('Error reading store.json, returning fallback initial data:', error);
     return initialData;

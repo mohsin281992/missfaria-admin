@@ -1,5 +1,6 @@
 import express from 'express';
 import { getStore, saveStore } from '../db.js';
+import { deleteOrderFromSupabase } from '../supabase.js';
 
 const router = express.Router();
 
@@ -40,7 +41,9 @@ router.delete('/:id', (req, res) => {
   }
 
   saveStore(store);
+  deleteOrderFromSupabase(req.params.id);
   res.json({ message: 'Order deleted successfully', id: req.params.id });
 });
 
 export default router;
+

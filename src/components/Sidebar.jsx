@@ -36,6 +36,7 @@ export default function Sidebar({
     { id: 'catalog', label: 'Catalog', icon: Package, badge: `${products.length} Items`, isExpandable: true },
     { id: 'sales', label: 'Sales', icon: ShoppingCart, badge: '6 Orders' },
     { id: 'customers', label: 'Customers', icon: Users },
+    { id: 'store-modules', label: 'Store Modules & Marketing', icon: Sparkles, badge: '7 Modules' },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];

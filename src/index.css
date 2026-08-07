@@ -47,6 +47,12 @@
   --transition-normal: 0.25s ease;
 }
 
+@keyframes marqueeTicker {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-100%, 0, 0); }
+}
+
+
 /* Light Theme Overrides */
 [data-theme="light"] {
   --bg-primary: #f3f4f6;
@@ -308,9 +314,10 @@ body {
   .main-content { padding: 16px; }
 }
 
-/* Full Page Modal Overlay & Content */
+/* Full View Modal Overlay & Content */
 .modal-overlay {
   position: fixed;
+  inset: 0;
   top: 0;
   left: 0;
   right: 0;
@@ -318,13 +325,16 @@ body {
   width: 100vw;
   height: 100vh;
   background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(10px);
-  z-index: 1000;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 9999;
   display: flex;
   align-items: stretch;
   justify-content: stretch;
   padding: 0 !important;
+  margin: 0 !important;
   animation: fadeIn 0.2s ease;
+  overflow: hidden;
 }
 
 .modal-content {
@@ -340,7 +350,23 @@ body {
   box-shadow: none !important;
   overflow: hidden;
   margin: 0 !important;
-  animation: slideUp 0.25s ease;
+  padding: 0 !important;
+  animation: slideUp 0.2s ease;
+}
+
+.modal-dialog {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  margin: auto;
+  animation: slideUp 0.2s ease;
 }
 
 @keyframes fadeIn {
@@ -350,4 +376,9 @@ body {
 @keyframes slideUp {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
