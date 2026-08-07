@@ -156,7 +156,7 @@ export default function StoreModulesView({
           </div>
           <div>
             <h1 style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-primary)', margin: 0 }}>
-              Storefront & Marketing Modules
+              Modules & Marketing
             </h1>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: '4px 0 0 0' }}>
               Manage dynamic announcement bars, trust badges, bundle deals, stock scarcity counters, FAQs & customer reviews.

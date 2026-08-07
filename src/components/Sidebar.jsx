@@ -246,7 +246,7 @@ export default function Sidebar({
                     </span>
                   </button>
 
-                  {/* 3. Store Modules & Marketing Section (Below Categories inside Catalog) */}
+                  {/* 3. Modules & Marketing Section (Below Categories inside Catalog) */}
                   <div style={{ marginTop: '4px' }}>
                     <button
                       onClick={() => {
@@ -273,11 +273,11 @@ export default function Sidebar({
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <Sparkles size={16} color={(activeTab === 'store-modules') ? 'var(--accent-primary)' : 'currentColor'} />
-                        <span>Store Modules & Marketing</span>
+                        <span>Modules & Marketing</span>
                       </div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <span className="badge badge-neutral" style={{ fontSize: '10px', padding: '2px 6px' }}>
-                          7 Modules
+                          {storeModulesList.length + 1} Modules
                         </span>
                         {isModulesExpanded ? (
                           <ChevronDown size={14} color="var(--text-muted)" />
@@ -286,6 +286,7 @@ export default function Sidebar({
                         )}
                       </div>
                     </button>
+
 
                     {/* Sub-items for 7 Storefront Modules */}
                     {isModulesExpanded && (
