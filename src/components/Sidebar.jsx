@@ -61,7 +61,7 @@ export default function Sidebar({
       borderRight: '1px solid var(--border-color)',
       display: 'flex',
       flexDirection: 'column',
-      zIndex: 100,
+      zIndex: 10000,
       transition: 'all var(--transition-normal)'
     }}>
       {/* Brand Header */}
