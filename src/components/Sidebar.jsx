@@ -14,12 +14,19 @@ import {
   Plus,
   Layers,
   FolderPlus,
-  Tag
+  Tag,
+  Megaphone,
+  ShieldCheck,
+  PackagePlus,
+  Timer,
+  HelpCircle,
+  Star
 } from 'lucide-react';
 
 export default function Sidebar({ 
   activeTab, 
   setActiveTab, 
+  onSelectModuleTab,
   categories = [],
   selectedCategory = 'All',
   setSelectedCategory,
@@ -30,13 +37,13 @@ export default function Sidebar({
   onAddProductClick 
 }) {
   const [isCatalogExpanded, setIsCatalogExpanded] = useState(true);
+  const [isModulesExpanded, setIsModulesExpanded] = useState(true);
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'catalog', label: 'Catalog', icon: Package, badge: `${products.length} Items`, isExpandable: true },
     { id: 'sales', label: 'Sales', icon: ShoppingCart, badge: '6 Orders' },
     { id: 'customers', label: 'Customers', icon: Users },
-    { id: 'store-modules', label: 'Store Modules & Marketing', icon: Sparkles, badge: '7 Modules' },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: Settings },
   ];
@@ -49,6 +56,23 @@ export default function Sidebar({
       setIsCatalogExpanded(true);
     }
   };
+
+  const handleModuleTabClick = (tabId) => {
+    setActiveTab('store-modules');
+    if (onSelectModuleTab) {
+      onSelectModuleTab(tabId);
+    }
+  };
+
+  const storeModulesList = [
+    { id: 'announcement', label: '1 & 2. Announcement Bar', icon: Megaphone },
+    { id: 'trust-badges', label: '3. Trusted Badges', icon: ShieldCheck },
+    { id: 'bundles', label: '4. Bundle Offers', icon: PackagePlus },
+    { id: 'stock-counters', label: '5. Stock & Timers', icon: Timer },
+    { id: 'faqs', label: '6. FAQ Manager', icon: HelpCircle },
+    { id: 'reviews', label: '7. Customer Reviews', icon: Star }
+  ];
+
 
   return (
     <aside style={{
@@ -221,8 +245,102 @@ export default function Sidebar({
                       {categories.length}
                     </span>
                   </button>
+
+                  {/* 3. Store Modules & Marketing Section (Below Categories inside Catalog) */}
+                  <div style={{ marginTop: '4px' }}>
+                    <button
+                      onClick={() => {
+                        setActiveTab('store-modules');
+                        setIsModulesExpanded(!isModulesExpanded);
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justify: 'space-between',
+                        width: '100%',
+                        padding: '9px 12px',
+                        borderRadius: 'var(--radius-md)',
+                        background: (activeTab === 'store-modules') ? 'rgba(99, 102, 241, 0.15)' : 'transparent',
+                        color: (activeTab === 'store-modules') ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                        fontSize: '13px',
+                        fontWeight: (activeTab === 'store-modules') ? '600' : '500',
+                        border: '1px solid',
+                        borderColor: (activeTab === 'store-modules') ? 'rgba(99, 102, 241, 0.3)' : 'transparent',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                        transition: 'all var(--transition-fast)'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <Sparkles size={16} color={(activeTab === 'store-modules') ? 'var(--accent-primary)' : 'currentColor'} />
+                        <span>Store Modules & Marketing</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span className="badge badge-neutral" style={{ fontSize: '10px', padding: '2px 6px' }}>
+                          7 Modules
+                        </span>
+                        {isModulesExpanded ? (
+                          <ChevronDown size={14} color="var(--text-muted)" />
+                        ) : (
+                          <ChevronRight size={14} color="var(--text-muted)" />
+                        )}
+                      </div>
+                    </button>
+
+                    {/* Sub-items for 7 Storefront Modules */}
+                    {isModulesExpanded && (
+                      <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '3px',
+                        marginTop: '4px',
+                        marginLeft: '12px',
+                        paddingLeft: '10px',
+                        borderLeft: '1px dashed rgba(99, 102, 241, 0.3)'
+                      }}>
+                        {storeModulesList.map((m) => {
+                          const MIcon = m.icon;
+                          return (
+                            <button
+                              key={m.id}
+                              onClick={() => handleModuleTabClick(m.id)}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                padding: '7px 10px',
+                                borderRadius: '6px',
+                                background: 'transparent',
+                                color: 'var(--text-muted)',
+                                fontSize: '12px',
+                                fontWeight: '500',
+                                border: 'none',
+                                cursor: 'pointer',
+                                textAlign: 'left',
+                                transition: 'all 0.15s ease'
+                              }}
+                              onMouseEnter={(e) => {
+                                e.currentTarget.style.color = 'var(--accent-primary)';
+                                e.currentTarget.style.background = 'rgba(99, 102, 241, 0.08)';
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.color = 'var(--text-muted)';
+                                e.currentTarget.style.background = 'transparent';
+                              }}
+                            >
+                              <MIcon size={14} color="var(--accent-primary)" />
+                              <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {m.label}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
+
             </React.Fragment>
           );
         })}

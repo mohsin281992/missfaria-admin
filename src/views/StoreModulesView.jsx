@@ -32,6 +32,7 @@ import {
 import { formatCurrency } from '../utils/formatters';
 
 export default function StoreModulesView({
+  initialActiveTab = 'announcement',
   products = [],
   settings = {},
   announcementBar,
@@ -55,7 +56,14 @@ export default function StoreModulesView({
   onUpdateReviewStatus,
   onDeleteReview
 }) {
-  const [activeTab, setActiveTab] = useState('announcement');
+  const [activeTab, setActiveTab] = useState(initialActiveTab || 'announcement');
+
+  useEffect(() => {
+    if (initialActiveTab) {
+      setActiveTab(initialActiveTab);
+    }
+  }, [initialActiveTab]);
+
 
   // Announcement Bar Form Local State
   const [annFormData, setAnnFormData] = useState(announcementBar || {});

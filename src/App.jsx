@@ -126,6 +126,7 @@ export default function App() {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState('catalog');
+  const [activeModuleTab, setActiveModuleTab] = useState('announcement');
   const [theme, setTheme] = useState(() => {
     const savedTheme = localStorage.getItem('aetheria_theme');
     return savedTheme || 'light';
@@ -473,6 +474,7 @@ export default function App() {
       <Sidebar 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        onSelectModuleTab={(tabId) => setActiveModuleTab(tabId)}
         categories={categories}
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
@@ -632,6 +634,7 @@ export default function App() {
 
           {activeTab === 'store-modules' && (
             <StoreModulesView 
+              initialActiveTab={activeModuleTab}
               products={products}
               settings={settings}
               announcementBar={announcementBar}
