@@ -369,20 +369,42 @@ export default function ProductFormModal({
           display: 'flex',
           alignItems: 'center',
           justify: 'space-between',
-          background: 'var(--bg-secondary)'
+          background: 'var(--bg-secondary)',
+          position: 'relative'
         }}>
-          <div>
-            <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-primary)' }}>
+          <div style={{ flex: 1, paddingRight: '48px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-primary)', margin: 0 }}>
               {isEditing ? `Edit Product: ${product.title}` : 'Add New Catalog Product'}
             </h3>
-            <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+            <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>
               Fill in all product specifications across the 8 management sections below
             </p>
           </div>
-          <button className="btn-icon" onClick={onClose}>
+          <button 
+            onClick={onClose}
+            title="Close popup"
+            style={{
+              position: 'absolute',
+              top: '16px',
+              right: '24px',
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border-color)',
+              color: 'var(--text-primary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
+            }}
+          >
             <X size={20} />
           </button>
         </div>
+
 
         {/* Multi-Section Tabs */}
         <div style={{

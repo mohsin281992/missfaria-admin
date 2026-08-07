@@ -367,7 +367,44 @@ body {
   overflow: hidden;
   margin: auto;
   animation: slideUp 0.2s ease;
+  position: relative;
 }
+
+.modal-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.modal-header .btn-close, .btn-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.modal-header .btn-close:hover, .btn-modal-close:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-color: var(--danger);
+  transform: scale(1.05);
+}
+
 
 @keyframes fadeIn {
   from { opacity: 0; }
