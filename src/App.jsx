@@ -490,6 +490,7 @@ export default function App() {
       <Sidebar 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        activeModuleTab={activeModuleTab}
         onSelectModuleTab={(tabId) => setActiveModuleTab(tabId)}
         categories={categories}
         selectedCategory={selectedCategory}

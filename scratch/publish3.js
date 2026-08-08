@@ -4,7 +4,7 @@ try {
   console.log('Staging changes...');
   execSync('git add .', { stdio: 'inherit' });
   console.log('Committing changes...');
-  execSync('git commit -m "Remove horizontal module tabs bar from Modules and Marketing view"', { stdio: 'inherit' });
+  execSync('git commit -m "List Modules and Marketing items directly under Categories in left sidebar in sequence"', { stdio: 'inherit' });
   console.log('Pushing to origin main...');
   execSync('git push origin main', { stdio: 'inherit' });
   console.log('Successfully published!');
