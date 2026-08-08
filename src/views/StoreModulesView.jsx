@@ -257,34 +257,55 @@ export default function StoreModulesView({
 
       {/* TAB 1 & 2: ANNOUNCEMENT BAR */}
       {activeTab === 'announcement' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '24px', alignItems: 'start' }}>
           
           {/* Form Controls Card */}
-          <div className="card p-6 flex flex-col space-y-6">
-            <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-indigo-500/15 flex items-center justify-center text-[var(--accent-primary)]">
-                  <Megaphone size={20} />
+          <div className="card" style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'rgba(99, 102, 241, 0.15)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--accent-primary)',
+                  flexShrink: 0
+                }}>
+                  <Megaphone size={22} />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-[var(--text-primary)] leading-tight">
+                  <h2 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-primary)', margin: 0 }}>
                     Announcement Bar Configuration
                   </h2>
-                  <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
                     Configure top scrolling ticker text, promo badges, colors & CTA link.
                   </p>
                 </div>
               </div>
             </div>
 
-            <form onSubmit={handleAnnSubmit} className="space-y-6">
-              {/* Enable Toggle Switch Box */}
-              <div className="flex items-center justify-between p-4 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-xl">
+            <form onSubmit={handleAnnSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+              
+              {/* Enable Toggle Box */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifySpace: 'between',
+                padding: '16px 20px',
+                background: 'var(--bg-primary)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 'var(--radius-md)'
+              }}>
                 <div>
-                  <div className="font-semibold text-sm text-[var(--text-primary)]">Enable Announcement Bar</div>
-                  <div className="text-xs text-[var(--text-muted)] mt-0.5">Show scrolling ticker bar at top of website</div>
+                  <div style={{ fontWeight: '700', fontSize: '14px', color: 'var(--text-primary)' }}>Enable Announcement Bar</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>Show scrolling ticker bar at top of website</div>
                 </div>
-                <label className="switch cursor-pointer">
+                <label className="switch" style={{ cursor: 'pointer' }}>
                   <input 
                     type="checkbox" 
                     checked={annFormData.enabled ?? true}
@@ -295,29 +316,40 @@ export default function StoreModulesView({
               </div>
 
               {/* Ticker Text Input Area */}
-              <div className="space-y-1.5">
-                <label className="form-label font-semibold text-xs uppercase tracking-wider text-[var(--text-secondary)] block">
+              <div>
+                <label className="form-label" style={{ fontWeight: '700', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-secondary)', marginBottom: '8px', display: 'block' }}>
                   1. Scrolling Ticker Text (Crawls Right to Left)
                 </label>
                 <textarea 
-                  className="form-control w-full min-h-[90px] p-3 text-sm rounded-lg leading-relaxed resize-y focus:ring-2 focus:ring-indigo-500/50" 
+                  className="form-control" 
                   rows={3}
+                  style={{
+                    width: '100%',
+                    minHeight: '95px',
+                    padding: '12px 14px',
+                    fontSize: '14px',
+                    lineHeight: '1.5',
+                    borderRadius: 'var(--radius-md)',
+                    resize: 'vertical'
+                  }}
                   value={annFormData.tickerText || ''}
                   onChange={(e) => setAnnFormData({ ...annFormData, tickerText: e.target.value })}
                   placeholder="Enter promo message to crawl continuously across the top bar..."
                 />
-                <span className="text-[11px] text-[var(--text-muted)] leading-normal block">
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '6px', display: 'block' }}>
                   💡 This text automatically loops right-to-left as a continuous marquee ticker.
                 </span>
               </div>
 
               {/* Scroll Speed & Color Pickers Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '14px' }}>
+                
                 {/* Scroll Speed */}
-                <div className="space-y-1.5">
-                  <label className="form-label font-semibold text-xs text-[var(--text-secondary)]">Scroll Speed</label>
+                <div>
+                  <label className="form-label" style={{ fontSize: '12px', fontWeight: '700' }}>Scroll Speed</label>
                   <select 
-                    className="form-control h-10 px-3 text-sm rounded-lg"
+                    className="form-control"
+                    style={{ height: '42px', padding: '8px 12px', fontSize: '13px', borderRadius: 'var(--radius-md)' }}
                     value={annFormData.scrollSpeed || 'normal'}
                     onChange={(e) => setAnnFormData({ ...annFormData, scrollSpeed: e.target.value })}
                   >
@@ -327,21 +359,29 @@ export default function StoreModulesView({
                   </select>
                 </div>
 
-                {/* Background Color Picker & Hex Input */}
-                <div className="space-y-1.5">
-                  <label className="form-label font-semibold text-xs text-[var(--text-secondary)]">Background Color</label>
-                  <div className="flex items-center gap-2">
-                    <div className="relative flex-shrink-0">
-                      <input 
-                        type="color" 
-                        className="w-10 h-10 p-0 border border-[var(--border-color)] rounded-lg cursor-pointer bg-transparent overflow-hidden shadow-inner"
-                        value={annFormData.bgColor || '#4f46e5'}
-                        onChange={(e) => setAnnFormData({ ...annFormData, bgColor: e.target.value })}
-                      />
-                    </div>
+                {/* Background Color Picker */}
+                <div>
+                  <label className="form-label" style={{ fontSize: '12px', fontWeight: '700' }}>Background Color</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input 
+                      type="color" 
+                      style={{
+                        width: '42px',
+                        height: '42px',
+                        padding: 0,
+                        border: '1px solid var(--border-color)',
+                        borderRadius: 'var(--radius-md)',
+                        cursor: 'pointer',
+                        background: 'transparent',
+                        flexShrink: 0
+                      }}
+                      value={annFormData.bgColor || '#4f46e5'}
+                      onChange={(e) => setAnnFormData({ ...annFormData, bgColor: e.target.value })}
+                    />
                     <input 
                       type="text" 
-                      className="form-control h-10 px-3 text-xs font-mono uppercase rounded-lg" 
+                      className="form-control" 
+                      style={{ height: '42px', padding: '8px 10px', fontSize: '12px', fontFamily: 'monospace', textTransform: 'uppercase', borderRadius: 'var(--radius-md)' }}
                       value={annFormData.bgColor || '#4f46e5'}
                       onChange={(e) => setAnnFormData({ ...annFormData, bgColor: e.target.value })}
                       placeholder="#4F46E5"
@@ -349,21 +389,29 @@ export default function StoreModulesView({
                   </div>
                 </div>
 
-                {/* Text Color Picker & Hex Input */}
-                <div className="space-y-1.5">
-                  <label className="form-label font-semibold text-xs text-[var(--text-secondary)]">Text Color</label>
-                  <div className="flex items-center gap-2">
-                    <div className="relative flex-shrink-0">
-                      <input 
-                        type="color" 
-                        className="w-10 h-10 p-0 border border-[var(--border-color)] rounded-lg cursor-pointer bg-transparent overflow-hidden shadow-inner"
-                        value={annFormData.textColor || '#ffffff'}
-                        onChange={(e) => setAnnFormData({ ...annFormData, textColor: e.target.value })}
-                      />
-                    </div>
+                {/* Text Color Picker */}
+                <div>
+                  <label className="form-label" style={{ fontSize: '12px', fontWeight: '700' }}>Text Color</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <input 
+                      type="color" 
+                      style={{
+                        width: '42px',
+                        height: '42px',
+                        padding: 0,
+                        border: '1px solid var(--border-color)',
+                        borderRadius: 'var(--radius-md)',
+                        cursor: 'pointer',
+                        background: 'transparent',
+                        flexShrink: 0
+                      }}
+                      value={annFormData.textColor || '#ffffff'}
+                      onChange={(e) => setAnnFormData({ ...annFormData, textColor: e.target.value })}
+                    />
                     <input 
                       type="text" 
-                      className="form-control h-10 px-3 text-xs font-mono uppercase rounded-lg" 
+                      className="form-control" 
+                      style={{ height: '42px', padding: '8px 10px', fontSize: '12px', fontFamily: 'monospace', textTransform: 'uppercase', borderRadius: 'var(--radius-md)' }}
                       value={annFormData.textColor || '#ffffff'}
                       onChange={(e) => setAnnFormData({ ...annFormData, textColor: e.target.value })}
                       placeholder="#FFFFFF"
@@ -373,12 +421,12 @@ export default function StoreModulesView({
               </div>
 
               {/* Right-Side Content Details Module */}
-              <div className="pt-2 border-t border-[var(--border-color)] space-y-4">
-                <div className="flex items-center justify-between">
-                  <label className="form-label font-semibold text-xs uppercase tracking-wider text-[var(--text-secondary)] m-0">
+              <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '18px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <label className="form-label" style={{ fontWeight: '700', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--text-secondary)', margin: 0 }}>
                     2. Right-Side Content Details Module
                   </label>
-                  <label className="switch cursor-pointer">
+                  <label className="switch" style={{ cursor: 'pointer' }}>
                     <input 
                       type="checkbox" 
                       checked={annFormData.enableRightDetails ?? true}
@@ -389,45 +437,49 @@ export default function StoreModulesView({
                 </div>
 
                 {/* 2-Column Grid for Right Side Details */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="form-label text-xs font-medium">Right Info Text / Helpline</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '14px' }}>
+                  <div>
+                    <label className="form-label" style={{ fontSize: '12px', fontWeight: '600' }}>Right Info Text / Helpline</label>
                     <input 
                       type="text" 
-                      className="form-control h-10 px-3 text-sm rounded-lg"
+                      className="form-control"
+                      style={{ height: '42px', padding: '8px 12px', fontSize: '13px' }}
                       value={annFormData.rightDetailText || ''}
                       onChange={(e) => setAnnFormData({ ...annFormData, rightDetailText: e.target.value })}
                       placeholder="📞 Helpline: +1 (800) 555-0199"
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="form-label text-xs font-medium">Action Link Target URL</label>
+                  <div>
+                    <label className="form-label" style={{ fontSize: '12px', fontWeight: '600' }}>Action Link Target URL</label>
                     <input 
                       type="text" 
-                      className="form-control h-10 px-3 text-sm rounded-lg"
+                      className="form-control"
+                      style={{ height: '42px', padding: '8px 12px', fontSize: '13px' }}
                       value={annFormData.rightLinkUrl || ''}
                       onChange={(e) => setAnnFormData({ ...annFormData, rightLinkUrl: e.target.value })}
                       placeholder="/catalog"
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="form-label text-xs font-medium">Promo Badge Tag</label>
+                  <div>
+                    <label className="form-label" style={{ fontSize: '12px', fontWeight: '600' }}>Promo Badge Tag</label>
                     <input 
                       type="text" 
-                      className="form-control h-10 px-3 text-sm rounded-lg"
+                      className="form-control"
+                      style={{ height: '42px', padding: '8px 12px', fontSize: '13px' }}
                       value={annFormData.rightBadgeText || ''}
                       onChange={(e) => setAnnFormData({ ...annFormData, rightBadgeText: e.target.value })}
                       placeholder="LIMITED OFFER"
                     />
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="form-label text-xs font-medium">Action Button Text</label>
+                  <div>
+                    <label className="form-label" style={{ fontSize: '12px', fontWeight: '600' }}>Action Button Text</label>
                     <input 
                       type="text" 
-                      className="form-control h-10 px-3 text-sm rounded-lg"
+                      className="form-control"
+                      style={{ height: '42px', padding: '8px 12px', fontSize: '13px' }}
                       value={annFormData.rightLinkText || ''}
                       onChange={(e) => setAnnFormData({ ...annFormData, rightLinkText: e.target.value })}
                       placeholder="Shop Flash Sale"
@@ -436,29 +488,57 @@ export default function StoreModulesView({
                 </div>
               </div>
 
-              {/* Full Width Submit Button */}
+              {/* SAVE & PUBLISH ANNOUNCEMENT BAR BUTTON (VERY PROMINENT & VISIBLE) */}
               <button 
                 type="submit" 
-                className="w-full py-3.5 px-6 font-bold text-sm rounded-xl text-white bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 active:scale-[0.99] transition-all shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 cursor-pointer border-0"
+                style={{
+                  width: '100%',
+                  padding: '16px 28px',
+                  fontSize: '16px',
+                  fontWeight: '800',
+                  letterSpacing: '0.3px',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)',
+                  color: '#ffffff',
+                  border: 'none',
+                  boxShadow: '0 8px 25px rgba(99, 102, 241, 0.45)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  transition: 'all 0.2s ease-in-out',
+                  marginTop: '12px'
+                }}
               >
-                <Save size={18} />
+                <Save size={20} />
                 Save & Publish Announcement Bar
               </button>
             </form>
           </div>
 
           {/* Interactive Real-Time Preview Card */}
-          <div className="card p-6 flex flex-col space-y-5">
-            <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-emerald-500/15 flex items-center justify-center text-emerald-500">
-                  <Eye size={20} />
+          <div className="card" style={{ padding: '28px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{
+                  width: '42px',
+                  height: '42px',
+                  borderRadius: 'var(--radius-md)',
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#10b981',
+                  flexShrink: 0
+                }}>
+                  <Eye size={22} />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-[var(--text-primary)] leading-tight">
+                  <h2 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-primary)', margin: 0 }}>
                     Live Interactive Preview
                   </h2>
-                  <p className="text-xs text-[var(--text-muted)] mt-0.5">
+                  <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
                     Real-time storefront header preview with live marquee ticker animation.
                   </p>
                 </div>
@@ -466,42 +546,78 @@ export default function StoreModulesView({
             </div>
 
             {/* Simulated Website Header Box (Responsive, Overflow Hidden) */}
-            <div className="w-full overflow-hidden rounded-xl border border-[var(--border-color)] shadow-xl shadow-black/20 bg-[var(--bg-secondary)]">
+            <div style={{
+              width: '100%',
+              overflow: 'hidden',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-color)',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+              background: 'var(--bg-secondary)'
+            }}>
               
               {/* THE ANNOUNCEMENT BAR COMPONENT */}
               {annFormData.enabled ? (
-                <div 
-                  className="w-full overflow-hidden flex items-center justify-between px-4 py-2.5 transition-colors relative"
-                  style={{
-                    backgroundColor: annFormData.bgColor || '#4f46e5',
-                    color: annFormData.textColor || '#ffffff',
-                    fontSize: `${annFormData.fontSize || 13}px`
-                  }}
-                >
+                <div style={{
+                  width: '100%',
+                  overflow: 'hidden',
+                  backgroundColor: annFormData.bgColor || '#4f46e5',
+                  color: annFormData.textColor || '#ffffff',
+                  fontSize: `${annFormData.fontSize || 13}px`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '10px 18px',
+                  boxSizing: 'border-box'
+                }}>
                   {/* Left Side: Scrolling Ticker Marquee Animation */}
-                  <div className="flex-1 overflow-hidden whitespace-nowrap mr-4 relative">
-                    <div 
-                      className="inline-block font-medium pl-[100%]"
-                      style={{
-                        animation: `marqueeTicker ${
-                          annFormData.scrollSpeed === 'fast' ? '8s' : annFormData.scrollSpeed === 'slow' ? '25s' : '15s'
-                        } linear infinite`
-                      }}
-                    >
+                  <div style={{
+                    flex: 1,
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    marginRight: '16px',
+                    position: 'relative'
+                  }}>
+                    <div style={{
+                      display: 'inline-block',
+                      paddingLeft: '100%',
+                      animation: `marqueeTicker ${
+                        annFormData.scrollSpeed === 'fast' ? '8s' : annFormData.scrollSpeed === 'slow' ? '25s' : '15s'
+                      } linear infinite`,
+                      fontWeight: '600'
+                    }}>
                       {annFormData.tickerText || 'Special Offer: Free shipping on all orders over $100!'}
                     </div>
                   </div>
 
                   {/* Right Side: Details Content */}
                   {annFormData.enableRightDetails && (
-                    <div className="flex-shrink-0 whitespace-nowrap flex items-center gap-2.5 bg-black/20 px-3 py-1 rounded-full max-w-[50%] overflow-hidden">
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
+                      maxWidth: '50%',
+                      overflow: 'hidden',
+                      background: 'rgba(0,0,0,0.2)',
+                      padding: '4px 12px',
+                      borderRadius: '20px'
+                    }}>
                       {annFormData.rightDetailText && (
-                        <span className="text-xs opacity-95 truncate">
+                        <span style={{ fontSize: '12px', opacity: 0.95, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {annFormData.rightDetailText}
                         </span>
                       )}
                       {annFormData.rightBadgeText && (
-                        <span className="bg-amber-400 text-black text-[10px] font-extrabold px-1.5 py-0.5 rounded flex-shrink-0">
+                        <span style={{
+                          background: '#f59e0b',
+                          color: '#000',
+                          fontSize: '10px',
+                          fontWeight: '800',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          flexShrink: 0
+                        }}>
                           {annFormData.rightBadgeText}
                         </span>
                       )}
@@ -509,8 +625,16 @@ export default function StoreModulesView({
                         <a 
                           href={annFormData.rightLinkUrl || '#'}
                           onClick={(e) => e.preventDefault()}
-                          className="font-bold underline text-xs flex items-center gap-1 flex-shrink-0 hover:opacity-90 transition-opacity"
-                          style={{ color: annFormData.textColor || '#ffffff' }}
+                          style={{
+                            color: annFormData.textColor || '#ffffff',
+                            fontWeight: '700',
+                            textDecoration: 'underline',
+                            fontSize: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            flexShrink: 0
+                          }}
                         >
                           {annFormData.rightLinkText}
                           <ExternalLink size={12} />
@@ -520,17 +644,17 @@ export default function StoreModulesView({
                   )}
                 </div>
               ) : (
-                <div className="p-4 text-center text-xs font-medium text-[var(--text-muted)] bg-[var(--bg-primary)]">
+                <div style={{ padding: '16px', textAlign: 'center', fontSize: '13px', fontWeight: '500', color: 'var(--text-muted)', background: 'var(--bg-primary)' }}>
                   Announcement Bar is currently Disabled
                 </div>
               )}
 
               {/* Simulated Navigation Bar */}
-              <div className="px-5 py-3.5 bg-[var(--bg-secondary)] border-t border-[var(--border-color)] flex items-center justify-between">
-                <div className="font-extrabold text-base text-[var(--text-primary)]">
+              <div style={{ padding: '14px 20px', background: 'var(--bg-secondary)', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ fontWeight: '800', fontSize: '16px', color: 'var(--text-primary)' }}>
                   {settings.storeName || 'Miss Faria Store'}
                 </div>
-                <div className="flex items-center gap-4 text-xs font-medium text-[var(--text-secondary)]">
+                <div style={{ display: 'flex', gap: '16px', fontSize: '13px', color: 'var(--text-secondary)', fontWeight: '500' }}>
                   <span>Catalog</span>
                   <span>Categories</span>
                   <span>Bundles</span>
@@ -539,11 +663,11 @@ export default function StoreModulesView({
               </div>
             </div>
 
-            <div className="bg-[var(--bg-primary)] p-4 rounded-xl border border-dashed border-[var(--border-color)] space-y-2">
-              <div className="font-semibold text-xs text-[var(--accent-primary)] flex items-center gap-1.5">
-                <Sparkles size={14} /> Key Features Active:
+            <div style={{ background: 'var(--bg-primary)', padding: '16px', borderRadius: 'var(--radius-md)', border: '1px dashed var(--border-color)' }}>
+              <div style={{ fontWeight: '700', fontSize: '13px', color: 'var(--accent-primary)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Sparkles size={15} /> Key Features Active:
               </div>
-              <ul className="text-xs text-[var(--text-secondary)] space-y-1 pl-4 list-disc leading-relaxed">
+              <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '12px', color: 'var(--text-secondary)', lineHeight: '1.7' }}>
                 <li><strong>Crawling Text:</strong> Smooth right-to-left marquee ticker loop with custom speed options.</li>
                 <li><strong>Right-Side Details:</strong> Integrated phone helpline, promo tag, and direct CTA link.</li>
                 <li><strong>Instant Sync:</strong> All changes save and sync seamlessly.</li>
