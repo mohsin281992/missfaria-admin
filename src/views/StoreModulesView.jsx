@@ -482,7 +482,7 @@ export default function StoreModulesView({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
-              3. Trusted Badges & Security Seals
+              Trusted Badges & Security Seals
             </h2>
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
               Manage checkout trust badges, money-back guarantees, and customer security seals.
@@ -566,7 +566,7 @@ export default function StoreModulesView({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
-              4. Bundle Offers & Cross-Sell Packs
+              Bundle Offers & Cross-Sell Packs
             </h2>
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
               Create product bundles with automatic discounts to boost Average Order Value (AOV).
@@ -848,7 +848,7 @@ export default function StoreModulesView({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
-              6. Frequently Asked Questions (FAQ) Module
+              Frequently Asked Questions (FAQ) Module
             </h2>
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
               Manage store FAQs to resolve buyer doubts before checkout.
@@ -903,7 +903,7 @@ export default function StoreModulesView({
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
-              7. Customer Reviews & Ratings Moderation
+              Customer Reviews & Ratings Moderation
             </h2>
             <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
               Approve, reject, and manage product reviews and star ratings.

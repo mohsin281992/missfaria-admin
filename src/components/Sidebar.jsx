@@ -66,12 +66,12 @@ export default function Sidebar({
   };
 
   const storeModulesList = [
-    { id: 'announcement', label: '1 & 2. Announcement Bar', icon: Megaphone },
-    { id: 'trust-badges', label: '3. Trusted Badges', icon: ShieldCheck },
-    { id: 'bundles', label: '4. Bundle Offers', icon: PackagePlus },
-    { id: 'stock-counters', label: '5. Stock & Timers', icon: Timer },
-    { id: 'faqs', label: '6. FAQ Manager', icon: HelpCircle },
-    { id: 'reviews', label: '7. Customer Reviews', icon: Star }
+    { id: 'announcement', label: 'Announcement Bar', icon: Megaphone },
+    { id: 'trust-badges', label: 'Trusted Badges', icon: ShieldCheck },
+    { id: 'bundles', label: 'Bundle Offers', icon: PackagePlus },
+    { id: 'stock-counters', label: 'Stock & Timers', icon: Timer },
+    { id: 'faqs', label: 'FAQ Manager', icon: HelpCircle },
+    { id: 'reviews', label: 'Customer Reviews', icon: Star }
   ];
 
 
