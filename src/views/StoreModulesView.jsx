@@ -165,56 +165,7 @@ export default function StoreModulesView({
         </div>
       </div>
 
-      {/* Module Navigation Tabs */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        borderBottom: '2px solid var(--border-color)',
-        marginBottom: '24px',
-        overflowX: 'auto',
-        paddingBottom: '2px'
-      }}>
-        {[
-          { id: 'announcement', label: '1 & 2. Announcement Bar', icon: Megaphone, count: annFormData.enabled ? 'Active' : 'Off' },
-          { id: 'trust-badges', label: '3. Trusted Badges', icon: ShieldCheck, count: `${trustBadges.length} Active` },
-          { id: 'bundles', label: '4. Bundle Offers', icon: PackagePlus, count: `${bundleOffers.length} Deals` },
-          { id: 'stock-counters', label: '5. Stock & Timers', icon: Timer, count: scFormData.enableCountdown ? 'Live' : 'Off' },
-          { id: 'faqs', label: '6. FAQ Manager', icon: HelpCircle, count: `${faqs.length} Q&A` },
-          { id: 'reviews', label: '7. Customer Reviews', icon: Star, count: `${reviews.length} Reviews` }
-        ].map(tab => {
-          const Icon = tab.icon;
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-                padding: '12px 20px',
-                fontSize: '14px',
-                fontWeight: isActive ? '700' : '500',
-                color: isActive ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                background: isActive ? 'var(--bg-secondary)' : 'transparent',
-                border: 'none',
-                borderBottom: isActive ? '3px solid var(--accent-primary)' : '3px solid transparent',
-                borderRadius: '8px 8px 0 0',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              <Icon size={18} color={isActive ? 'var(--accent-primary)' : 'currentColor'} />
-              <span>{tab.label}</span>
-              <span className="badge badge-neutral" style={{ fontSize: '10px', padding: '2px 6px' }}>
-                {tab.count}
-              </span>
-            </button>
-          );
-        })}
-      </div>
+
 
       {/* TAB 1 & 2: ANNOUNCEMENT BAR */}
       {activeTab === 'announcement' && (
