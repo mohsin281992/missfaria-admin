@@ -1237,18 +1237,94 @@ function BadgeFormModal({ badge, onSave, onClose }) {
   });
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content" style={{ width: '450px' }}>
-        <div className="modal-header">
-          <h3>{badge ? 'Edit Trust Badge' : 'Add New Trust Badge'}</h3>
-          <button className="btn-close" onClick={onClose}><X size={18} /></button>
+    <div 
+      className="modal-overlay" 
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 10000,
+        padding: '16px'
+      }}
+    >
+      {/* Centered Card Container */}
+      <div 
+        style={{
+          width: '100%',
+          maxWidth: '560px',
+          margin: 'auto',
+          background: 'var(--bg-secondary)',
+          borderRadius: 'var(--radius-lg)',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.45)',
+          border: '1px solid var(--border-color)',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden'
+        }}
+      >
+        {/* Header */}
+        <div style={{
+          padding: '20px 24px',
+          borderBottom: '1px solid var(--border-color)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          background: 'var(--bg-primary)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{
+              width: '38px',
+              height: '38px',
+              borderRadius: '10px',
+              background: 'rgba(99, 102, 241, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--accent-primary)',
+              flexShrink: 0
+            }}>
+              <ShieldCheck size={20} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-primary)', margin: 0 }}>
+                {badge ? 'Edit Trust Badge' : 'Add New Trust Badge'}
+              </h3>
+              <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
+                Configure trust badge icon, title, description, and storefront visibility.
+              </p>
+            </div>
+          </div>
+          <button 
+            type="button"
+            onClick={onClose}
+            style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              background: 'transparent',
+              border: '1px solid var(--border-color)',
+              color: 'var(--text-secondary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer'
+            }}
+          >
+            <X size={16} />
+          </button>
         </div>
-        <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+
+        {/* Form Body - Equal vertical spacing */}
+        <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          {/* Badge Title */}
           <div>
-            <label className="form-label">Badge Title</label>
+            <label className="form-label" style={{ fontSize: '13px', fontWeight: '700', marginBottom: '6px', display: 'block' }}>
+              Badge Title *
+            </label>
             <input 
               type="text" 
               className="form-control" 
+              style={{ height: '42px', padding: '10px 14px', fontSize: '14px' }}
               value={formData.title} 
               onChange={e => setFormData({ ...formData, title: e.target.value })}
               placeholder="e.g. Free Express Shipping"
@@ -1256,57 +1332,121 @@ function BadgeFormModal({ badge, onSave, onClose }) {
             />
           </div>
 
+          {/* Subtitle Description */}
           <div>
-            <label className="form-label">Subtitle Description</label>
+            <label className="form-label" style={{ fontSize: '13px', fontWeight: '700', marginBottom: '6px', display: 'block' }}>
+              Subtitle Description
+            </label>
             <input 
               type="text" 
               className="form-control" 
+              style={{ height: '42px', padding: '10px 14px', fontSize: '14px' }}
               value={formData.subtitle} 
               onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
-              placeholder="e.g. On all orders above $100"
+              placeholder="e.g. On all orders above $100 minimum threshold"
             />
           </div>
 
+          {/* Select Icon */}
           <div>
-            <label className="form-label">Select Icon</label>
+            <label className="form-label" style={{ fontSize: '13px', fontWeight: '700', marginBottom: '6px', display: 'block' }}>
+              Select Icon
+            </label>
             <select 
               className="form-control"
+              style={{ height: '42px', padding: '10px 14px', fontSize: '14px' }}
               value={formData.icon}
               onChange={e => setFormData({ ...formData, icon: e.target.value })}
             >
-              <option value="ShieldCheck">ShieldCheck (Security / Money Back)</option>
-              <option value="Truck">Truck (Shipping / Delivery)</option>
-              <option value="Lock">Lock (SSL / Payments)</option>
-              <option value="Headphones">Headphones (24/7 Support)</option>
+              <option value="ShieldCheck">ShieldCheck (Security / Money Back Guarantee)</option>
+              <option value="Truck">Truck (Shipping / Express Delivery)</option>
+              <option value="Lock">Lock (SSL / Encrypted Payments)</option>
+              <option value="Headphones">Headphones (24/7 Live Customer Support)</option>
+              <option value="Award">Award (Quality Assurance Seal)</option>
             </select>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          {/* Clean 2-Column Grid for Color & Status */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', alignItems: 'end' }}>
+            
+            {/* Icon Color Input: Color picker + Hex text input in clean flex layout */}
             <div>
-              <label className="form-label">Icon Color</label>
-              <input 
-                type="color" 
-                style={{ width: '100%', height: '38px', cursor: 'pointer' }}
-                value={formData.iconColor}
-                onChange={e => setFormData({ ...formData, iconColor: e.target.value })}
-              />
+              <label className="form-label" style={{ fontSize: '13px', fontWeight: '700', marginBottom: '6px', display: 'block' }}>
+                Icon Color
+              </label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <input 
+                  type="color" 
+                  style={{ 
+                    width: '42px', 
+                    height: '42px', 
+                    padding: 0, 
+                    border: '1px solid var(--border-color)', 
+                    borderRadius: 'var(--radius-md)', 
+                    cursor: 'pointer',
+                    background: 'transparent',
+                    flexShrink: 0 
+                  }}
+                  value={formData.iconColor}
+                  onChange={e => setFormData({ ...formData, iconColor: e.target.value })}
+                />
+                <input 
+                  type="text" 
+                  className="form-control" 
+                  style={{ height: '42px', padding: '8px 12px', fontSize: '13px', fontFamily: 'monospace', textTransform: 'uppercase' }}
+                  value={formData.iconColor}
+                  onChange={e => setFormData({ ...formData, iconColor: e.target.value })}
+                  placeholder="#6366F1"
+                />
+              </div>
             </div>
+
+            {/* Active Status */}
             <div>
-              <label className="form-label">Active</label>
+              <label className="form-label" style={{ fontSize: '13px', fontWeight: '700', marginBottom: '6px', display: 'block' }}>
+                Active Status
+              </label>
               <select 
                 className="form-control"
+                style={{ height: '42px', padding: '10px 14px', fontSize: '14px' }}
                 value={formData.active ? 'true' : 'false'}
                 onChange={e => setFormData({ ...formData, active: e.target.value === 'true' })}
               >
-                <option value="true">Active</option>
+                <option value="true">Active on Store</option>
                 <option value="false">Hidden</option>
               </select>
             </div>
+
           </div>
         </div>
-        <div className="modal-footer">
-          <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
-          <button className="btn btn-primary" onClick={() => onSave(formData)}>Save Badge</button>
+
+        {/* Right-Aligned Footer Buttons */}
+        <div style={{
+          padding: '16px 24px',
+          borderTop: '1px solid var(--border-color)',
+          background: 'var(--bg-primary)',
+          display: 'flex',
+          justifyContent: 'flex-end',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <button 
+            type="button"
+            className="btn btn-secondary" 
+            style={{ padding: '10px 18px', fontSize: '14px' }}
+            onClick={onClose}
+          >
+            Cancel
+          </button>
+          <button 
+            type="button"
+            className="btn btn-primary" 
+            style={{ padding: '10px 22px', fontSize: '14px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}
+            onClick={() => onSave(formData)}
+          >
+            <Save size={16} />
+            Save Badge
+          </button>
         </div>
       </div>
     </div>
