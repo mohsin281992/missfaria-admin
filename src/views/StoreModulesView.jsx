@@ -529,24 +529,13 @@ export default function StoreModulesView({
       {/* TAB 3: TRUSTED BADGES */}
       {activeTab === 'trust-badges' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
-                3. Trusted Badges & Security Seals
-              </h2>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
-                Manage checkout trust badges, money-back guarantees, and customer security seals.
-              </p>
-            </div>
-            <button 
-              onClick={() => {
-                setEditingBadge(null);
-                setIsBadgeModalOpen(true);
-              }}
-              className="btn btn-primary"
-            >
-              <Plus size={16} /> Add New Trust Badge
-            </button>
+          <div>
+            <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
+              3. Trusted Badges & Security Seals
+            </h2>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
+              Manage checkout trust badges, money-back guarantees, and customer security seals.
+            </p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
@@ -624,24 +613,13 @@ export default function StoreModulesView({
       {/* TAB 4: BUNDLE OFFERS */}
       {activeTab === 'bundles' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
-                4. Bundle Offers & Combo Deals
-              </h2>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
-                Combine products into discounted bundles to increase Average Order Value (AOV).
-              </p>
-            </div>
-            <button 
-              onClick={() => {
-                setEditingBundle(null);
-                setIsBundleModalOpen(true);
-              }}
-              className="btn btn-primary"
-            >
-              <Plus size={16} /> Create Bundle Offer
-            </button>
+          <div>
+            <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
+              4. Bundle Offers & Cross-Sell Packs
+            </h2>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
+              Create product bundles with automatic discounts to boost Average Order Value (AOV).
+            </p>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '20px' }}>
@@ -917,24 +895,13 @@ export default function StoreModulesView({
       {/* TAB 6: FAQ MANAGER */}
       {activeTab === 'faqs' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
-                6. Frequently Asked Questions (FAQ) Module
-              </h2>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
-                Manage store FAQs to resolve buyer doubts before checkout.
-              </p>
-            </div>
-            <button 
-              onClick={() => {
-                setEditingFaq(null);
-                setIsFaqModalOpen(true);
-              }}
-              className="btn btn-primary"
-            >
-              <Plus size={16} /> Add New FAQ
-            </button>
+          <div>
+            <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
+              6. Frequently Asked Questions (FAQ) Module
+            </h2>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
+              Manage store FAQs to resolve buyer doubts before checkout.
+            </p>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -983,21 +950,13 @@ export default function StoreModulesView({
       {/* TAB 7: CUSTOMER REVIEWS */}
       {activeTab === 'reviews' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
-                7. Customer Reviews & Ratings Moderation
-              </h2>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
-                Approve, reject, and manage product reviews and star ratings.
-              </p>
-            </div>
-            <button 
-              onClick={() => setIsReviewModalOpen(true)}
-              className="btn btn-primary"
-            >
-              <Plus size={16} /> Add Manual Review
-            </button>
+          <div>
+            <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
+              7. Customer Reviews & Ratings Moderation
+            </h2>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
+              Approve, reject, and manage product reviews and star ratings.
+            </p>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>

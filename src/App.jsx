@@ -182,7 +182,7 @@ export default function App() {
     try { localStorage.setItem('aetheria_reviews', JSON.stringify(reviews)); } catch (e) { console.warn(e); }
   }, [reviews]);
 
-  // Load Data from Node.js Backend API & merge with local cache
+  // Load Data from Node.js Backend API & merge smartly with local cache
   useEffect(() => {
     async function loadData() {
       try {
@@ -204,9 +204,25 @@ export default function App() {
           api.fetchReviews().catch(() => null)
         ]);
 
-        if (prodsData && Array.isArray(prodsData) && prodsData.length > 0) setProducts(prodsData);
-        if (catsData && Array.isArray(catsData) && catsData.length > 0) setCategories(catsData);
-        if (ordsData && Array.isArray(ordsData) && ordsData.length > 0) setOrders(ordsData);
+        if (prodsData && Array.isArray(prodsData) && prodsData.length > 0) {
+          setProducts(prev => {
+            const serverMap = new Map(prodsData.map(p => [p.id, p]));
+            const localOnly = prev.filter(p => p && p.id && !serverMap.has(p.id));
+            // Sync local-only products to backend in background
+            localOnly.forEach(p => api.createProduct(p).catch(() => {}));
+            return [...prodsData, ...localOnly];
+          });
+        }
+        if (catsData && Array.isArray(catsData) && catsData.length > 0) {
+          setCategories(prev => Array.from(new Set([...catsData, ...prev])));
+        }
+        if (ordsData && Array.isArray(ordsData) && ordsData.length > 0) {
+          setOrders(prev => {
+            const serverMap = new Map(ordsData.map(o => [o.id, o]));
+            const localOnly = prev.filter(o => o && o.id && !serverMap.has(o.id));
+            return [...ordsData, ...localOnly];
+          });
+        }
         if (custsData && Array.isArray(custsData) && custsData.length > 0) setCustomers(custsData);
         if (setsData && typeof setsData === 'object' && Object.keys(setsData).length > 0) setSettings(setsData);
         if (annData && typeof annData === 'object' && Object.keys(annData).length > 0) setAnnouncementBar(annData);

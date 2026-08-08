@@ -1,25 +1,26 @@
 import express from 'express';
 import { getStore, saveStore } from '../db.js';
-import { supabase, deleteCategoryFromSupabase } from '../supabase.js';
+import { supabase, upsertCategoryInSupabase, deleteCategoryFromSupabase } from '../supabase.js';
 
 const router = express.Router();
 
-// GET all categories (live from Supabase with fallback)
+// GET all categories (merges live Supabase data with local store.json)
 router.get('/', async (req, res) => {
-  let categories = [];
+  const store = getStore();
+  const localCategories = store.categories || [];
+  let supabaseCategories = [];
+
   if (supabase) {
     try {
       const { data, error } = await supabase.from('categories').select('name');
-      if (!error && Array.isArray(data) && data.length > 0) {
-        categories = data.map(c => c.name);
+      if (!error && Array.isArray(data)) {
+        supabaseCategories = data.map(c => c.name);
       }
     } catch (e) {}
   }
 
-  if (!categories.length) {
-    const store = getStore();
-    categories = store.categories || [];
-  }
+  // Deduplicated merged categories
+  const categories = Array.from(new Set([...localCategories, ...supabaseCategories]));
 
   res.json(categories);
 });
@@ -34,14 +35,13 @@ router.post('/', async (req, res) => {
   const trimmed = name.trim();
   const store = getStore();
 
+  store.categories = store.categories || [];
   if (!store.categories.includes(trimmed)) {
     store.categories.push(trimmed);
     await saveStore(store);
   }
 
-  if (supabase) {
-    await supabase.from('categories').upsert([{ name: trimmed }], { onConflict: 'name' }).catch(e => console.warn('Supabase category add err:', e.message));
-  }
+  await upsertCategoryInSupabase(trimmed);
 
   res.status(201).json(store.categories);
 });
@@ -59,5 +59,3 @@ router.delete('/:name', async (req, res) => {
 });
 
 export default router;
-
-

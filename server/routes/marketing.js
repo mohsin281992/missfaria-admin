@@ -5,21 +5,21 @@ import { supabase } from '../supabase.js';
 const router = express.Router();
 
 // =========================================================
-// 1 & 2. ANNOUNCEMENT BAR (Scrolling ticker & Right-side details)
+// 1 & 2. ANNOUNCEMENT BAR
 // =========================================================
 router.get('/announcement', (req, res) => {
   const store = getStore();
   res.json(store.announcementBar || {});
 });
 
-router.put('/announcement', (req, res) => {
+router.put('/announcement', async (req, res) => {
   const store = getStore();
   store.announcementBar = {
     ...store.announcementBar,
     ...req.body,
     updatedAt: new Date().toISOString()
   };
-  saveStore(store);
+  await saveStore(store);
   res.json(store.announcementBar);
 });
 
@@ -31,7 +31,7 @@ router.get('/trust-badges', (req, res) => {
   res.json(store.trustBadges || []);
 });
 
-router.post('/trust-badges', (req, res) => {
+router.post('/trust-badges', async (req, res) => {
   const store = getStore();
   const newBadge = {
     id: `tb-${Date.now()}`,
@@ -45,24 +45,24 @@ router.post('/trust-badges', (req, res) => {
   };
   store.trustBadges = store.trustBadges || [];
   store.trustBadges.push(newBadge);
-  saveStore(store);
+  await saveStore(store);
   res.status(201).json(newBadge);
 });
 
-router.put('/trust-badges/:id', (req, res) => {
+router.put('/trust-badges/:id', async (req, res) => {
   const store = getStore();
   const index = (store.trustBadges || []).findIndex(b => b.id === req.params.id);
   if (index === -1) return res.status(404).json({ error: 'Badge not found' });
 
   store.trustBadges[index] = { ...store.trustBadges[index], ...req.body };
-  saveStore(store);
+  await saveStore(store);
   res.json(store.trustBadges[index]);
 });
 
-router.delete('/trust-badges/:id', (req, res) => {
+router.delete('/trust-badges/:id', async (req, res) => {
   const store = getStore();
   store.trustBadges = (store.trustBadges || []).filter(b => b.id !== req.params.id);
-  saveStore(store);
+  await saveStore(store);
   if (supabase) supabase.from('trust_badges').delete().eq('id', req.params.id).catch(() => {});
   res.json({ message: 'Badge deleted successfully', id: req.params.id });
 });
@@ -75,7 +75,7 @@ router.get('/bundles', (req, res) => {
   res.json(store.bundleOffers || []);
 });
 
-router.post('/bundles', (req, res) => {
+router.post('/bundles', async (req, res) => {
   const store = getStore();
   const newBundle = {
     id: `bnd-${Date.now()}`,
@@ -91,24 +91,24 @@ router.post('/bundles', (req, res) => {
   };
   store.bundleOffers = store.bundleOffers || [];
   store.bundleOffers.unshift(newBundle);
-  saveStore(store);
+  await saveStore(store);
   res.status(201).json(newBundle);
 });
 
-router.put('/bundles/:id', (req, res) => {
+router.put('/bundles/:id', async (req, res) => {
   const store = getStore();
   const index = (store.bundleOffers || []).findIndex(b => b.id === req.params.id);
   if (index === -1) return res.status(404).json({ error: 'Bundle not found' });
 
   store.bundleOffers[index] = { ...store.bundleOffers[index], ...req.body };
-  saveStore(store);
+  await saveStore(store);
   res.json(store.bundleOffers[index]);
 });
 
-router.delete('/bundles/:id', (req, res) => {
+router.delete('/bundles/:id', async (req, res) => {
   const store = getStore();
   store.bundleOffers = (store.bundleOffers || []).filter(b => b.id !== req.params.id);
-  saveStore(store);
+  await saveStore(store);
   if (supabase) supabase.from('bundle_offers').delete().eq('id', req.params.id).catch(() => {});
   res.json({ message: 'Bundle deleted successfully', id: req.params.id });
 });
@@ -121,14 +121,14 @@ router.get('/stock-counters', (req, res) => {
   res.json(store.stockCounters || {});
 });
 
-router.put('/stock-counters', (req, res) => {
+router.put('/stock-counters', async (req, res) => {
   const store = getStore();
   store.stockCounters = {
     ...store.stockCounters,
     ...req.body,
     updatedAt: new Date().toISOString()
   };
-  saveStore(store);
+  await saveStore(store);
   res.json(store.stockCounters);
 });
 
@@ -140,7 +140,7 @@ router.get('/faqs', (req, res) => {
   res.json(store.faqs || []);
 });
 
-router.post('/faqs', (req, res) => {
+router.post('/faqs', async (req, res) => {
   const store = getStore();
   const newFaq = {
     id: `faq-${Date.now()}`,
@@ -152,24 +152,24 @@ router.post('/faqs', (req, res) => {
   };
   store.faqs = store.faqs || [];
   store.faqs.push(newFaq);
-  saveStore(store);
+  await saveStore(store);
   res.status(201).json(newFaq);
 });
 
-router.put('/faqs/:id', (req, res) => {
+router.put('/faqs/:id', async (req, res) => {
   const store = getStore();
   const index = (store.faqs || []).findIndex(f => f.id === req.params.id);
   if (index === -1) return res.status(404).json({ error: 'FAQ not found' });
 
   store.faqs[index] = { ...store.faqs[index], ...req.body };
-  saveStore(store);
+  await saveStore(store);
   res.json(store.faqs[index]);
 });
 
-router.delete('/faqs/:id', (req, res) => {
+router.delete('/faqs/:id', async (req, res) => {
   const store = getStore();
   store.faqs = (store.faqs || []).filter(f => f.id !== req.params.id);
-  saveStore(store);
+  await saveStore(store);
   if (supabase) supabase.from('faqs').delete().eq('id', req.params.id).catch(() => {});
   res.json({ message: 'FAQ deleted successfully', id: req.params.id });
 });
@@ -182,7 +182,7 @@ router.get('/reviews', (req, res) => {
   res.json(store.reviews || []);
 });
 
-router.post('/reviews', (req, res) => {
+router.post('/reviews', async (req, res) => {
   const store = getStore();
   const newReview = {
     id: `rev-${Date.now()}`,
@@ -200,25 +200,25 @@ router.post('/reviews', (req, res) => {
   };
   store.reviews = store.reviews || [];
   store.reviews.unshift(newReview);
-  saveStore(store);
+  await saveStore(store);
   res.status(201).json(newReview);
 });
 
-router.patch('/reviews/:id/status', (req, res) => {
+router.patch('/reviews/:id/status', async (req, res) => {
   const { status } = req.body;
   const store = getStore();
   const review = (store.reviews || []).find(r => r.id === req.params.id);
   if (!review) return res.status(404).json({ error: 'Review not found' });
 
   review.status = status;
-  saveStore(store);
+  await saveStore(store);
   res.json(review);
 });
 
-router.delete('/reviews/:id', (req, res) => {
+router.delete('/reviews/:id', async (req, res) => {
   const store = getStore();
   store.reviews = (store.reviews || []).filter(r => r.id !== req.params.id);
-  saveStore(store);
+  await saveStore(store);
   if (supabase) supabase.from('reviews').delete().eq('id', req.params.id).catch(() => {});
   res.json({ message: 'Review deleted successfully', id: req.params.id });
 });

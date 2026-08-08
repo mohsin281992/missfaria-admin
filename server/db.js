@@ -14,6 +14,7 @@ import {
   defaultFaqs,
   defaultReviews
 } from '../src/data/mockData.js';
+import { syncStoreToSupabase } from './supabase.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,7 +45,6 @@ const initialData = {
   reviews: defaultReviews
 };
 
-
 // Read database from store.json
 export function getStore() {
   try {
@@ -58,7 +58,7 @@ export function getStore() {
     // Merge missing initial defaults if store.json was created before marketing modules
     let modified = false;
     for (const key of Object.keys(initialData)) {
-      if (parsed[key] === undefined) {
+      if (parsed[key] === undefined || parsed[key] === null) {
         parsed[key] = initialData[key];
         modified = true;
       }
@@ -73,22 +73,22 @@ export function getStore() {
   }
 }
 
-import { syncStoreToSupabase } from './supabase.js';
-
 // Save database to store.json and sync to Supabase
 export async function saveStore(data) {
+  let diskSuccess = false;
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    diskSuccess = true;
   } catch (error) {
-    console.error('Error saving store.json:', error);
+    console.error('Error saving store.json:', error.message);
   }
 
-  // Await Supabase sync to ensure Vercel serverless functions complete database persistence before returning response
+  // Attempt Supabase sync asynchronously/non-blocking for web responses
   try {
-    return await syncStoreToSupabase(data);
+    const syncRes = await syncStoreToSupabase(data);
+    return { success: diskSuccess || syncRes.success, syncResult: syncRes };
   } catch (err) {
-    console.warn('Supabase auto-sync failed:', err.message);
-    return { success: false, error: err.message };
+    console.warn('Supabase auto-sync error:', err.message);
+    return { success: diskSuccess, error: err.message };
   }
 }
-

@@ -1,29 +1,45 @@
 import express from 'express';
 import { getStore, saveStore } from '../db.js';
-import { supabase, deleteProductFromSupabase } from '../supabase.js';
+import { supabase, upsertProductInSupabase, deleteProductFromSupabase } from '../supabase.js';
 
 const router = express.Router();
 
-// GET all products (fetches live from Supabase with local fallback)
+// Utility function to merge Supabase products with local store products by ID
+function mergeProducts(localList = [], supabaseList = []) {
+  const map = new Map();
+  // Insert local products first
+  for (const p of localList) {
+    if (p && p.id) map.set(p.id, p);
+  }
+  // Overlay/merge Supabase products
+  for (const p of supabaseList) {
+    if (p && p.id) {
+      map.set(p.id, { ...map.get(p.id), ...p });
+    }
+  }
+  return Array.from(map.values());
+}
+
+// GET all products (Merges live Supabase data with local store.json)
 router.get('/', async (req, res) => {
-  let products = [];
-  
+  const store = getStore();
+  let localProducts = store.products || [];
+  let supabaseProducts = [];
+
   if (supabase) {
     try {
       const { data, error } = await supabase.from('products').select('*').order('createdAt', { ascending: false });
-      if (!error && Array.isArray(data) && data.length > 0) {
-        products = data;
+      if (!error && Array.isArray(data)) {
+        supabaseProducts = data;
       }
     } catch (e) {
       console.warn('Supabase products fetch failed, using local store fallback:', e.message);
     }
   }
 
-  if (!products.length) {
-    const store = getStore();
-    products = store.products || [];
-  }
-  
+  // Merge products from both sources so no product is ever lost
+  let products = mergeProducts(localProducts, supabaseProducts);
+
   const { category, search, status } = req.query;
 
   if (category && category !== 'All') {
@@ -36,7 +52,7 @@ router.get('/', async (req, res) => {
       p.title?.toLowerCase().includes(q) ||
       p.sku?.toLowerCase().includes(q) ||
       p.brand?.toLowerCase().includes(q) ||
-      p.tags?.some(t => t.toLowerCase().includes(q))
+      p.tags?.some(t => typeof t === 'string' && t.toLowerCase().includes(q))
     );
   }
 
@@ -49,17 +65,18 @@ router.get('/', async (req, res) => {
 
 // GET single product
 router.get('/:id', async (req, res) => {
+  const store = getStore();
+  let product = (store.products || []).find(p => p.id === req.params.id);
+
   if (supabase) {
     try {
       const { data, error } = await supabase.from('products').select('*').eq('id', req.params.id).single();
       if (!error && data) {
-        return res.json(data);
+        product = { ...(product || {}), ...data };
       }
     } catch (e) {}
   }
 
-  const store = getStore();
-  const product = (store.products || []).find(p => p.id === req.params.id);
   if (!product) {
     return res.status(404).json({ error: 'Product not found' });
   }
@@ -74,16 +91,16 @@ router.post('/', async (req, res) => {
   const newProduct = {
     ...req.body,
     id: req.body.id || `prod-${Date.now()}`,
-    createdAt: now,
+    createdAt: req.body.createdAt || now,
     updatedAt: now
   };
 
+  store.products = store.products || [];
   store.products.unshift(newProduct);
   await saveStore(store);
 
-  if (supabase) {
-    await supabase.from('products').upsert([newProduct], { onConflict: 'id' }).catch(e => console.warn('Supabase product upsert err:', e.message));
-  }
+  // Sync to Supabase
+  await upsertProductInSupabase(newProduct);
 
   res.status(201).json(newProduct);
 });
@@ -91,7 +108,8 @@ router.post('/', async (req, res) => {
 // PUT update product
 router.put('/:id', async (req, res) => {
   const store = getStore();
-  const index = (store.products || []).findIndex(p => p.id === req.params.id);
+  store.products = store.products || [];
+  const index = store.products.findIndex(p => p.id === req.params.id);
   
   const updatedProduct = {
     ...(index !== -1 ? store.products[index] : {}),
@@ -108,9 +126,8 @@ router.put('/:id', async (req, res) => {
 
   await saveStore(store);
 
-  if (supabase) {
-    await supabase.from('products').upsert([updatedProduct], { onConflict: 'id' }).catch(e => console.warn('Supabase product update err:', e.message));
-  }
+  // Sync to Supabase
+  await upsertProductInSupabase(updatedProduct);
 
   res.json(updatedProduct);
 });
@@ -122,6 +139,7 @@ router.delete('/:id', async (req, res) => {
   
   await saveStore(store);
   await deleteProductFromSupabase(req.params.id);
+
   res.json({ message: 'Product deleted successfully', id: req.params.id });
 });
 
@@ -152,13 +170,9 @@ router.post('/:id/duplicate', async (req, res) => {
 
   store.products.unshift(duplicated);
   await saveStore(store);
-
-  if (supabase) {
-    await supabase.from('products').upsert([duplicated], { onConflict: 'id' }).catch(e => console.warn('Supabase product duplicate err:', e.message));
-  }
+  await upsertProductInSupabase(duplicated);
 
   res.status(201).json(duplicated);
 });
 
 export default router;
-
