@@ -1395,7 +1395,11 @@ export default function ProductFormModal({
                                 justifyContent: 'center',
                                 flexShrink: 0
                               }}>
-                                <IconComp size={22} color={badge.iconColor || '#6366f1'} />
+                                {badge.imageUrl ? (
+                                  <img src={badge.imageUrl} alt={badge.title} style={{ width: '24px', height: '24px', objectFit: 'contain' }} />
+                                ) : (
+                                  <IconComp size={22} color={badge.iconColor || '#6366f1'} />
+                                )}
                               </div>
 
                               <div style={{ flex: 1, paddingRight: '24px' }}>
@@ -1470,7 +1474,11 @@ export default function ProductFormModal({
                               : ShieldCheck;
                             return (
                               <div key={badge.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: 'var(--card-bg)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                                <IconComp size={18} color={badge.iconColor || '#6366f1'} />
+                                {badge.imageUrl ? (
+                                  <img src={badge.imageUrl} alt={badge.title} style={{ width: '20px', height: '20px', objectFit: 'contain' }} />
+                                ) : (
+                                  <IconComp size={18} color={badge.iconColor || '#6366f1'} />
+                                )}
                                 <div>
                                   <div style={{ fontSize: '12px', fontWeight: '700' }}>{badge.title}</div>
                                   <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{badge.subtitle}</div>

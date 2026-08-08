@@ -26,7 +26,12 @@ import {
   Flame,
   ChevronDown,
   ChevronUp,
-  RefreshCw
+  RefreshCw,
+  Upload,
+  Link,
+  Award,
+  CheckCircle,
+  Zap
 } from 'lucide-react';
 
 import { formatCurrency } from '../utils/formatters';
@@ -684,7 +689,15 @@ export default function StoreModulesView({
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
             {trustBadges.map((badge) => {
-              const IconComp = badge.icon === 'Truck' ? Truck : badge.icon === 'Lock' ? Lock : badge.icon === 'Headphones' ? Headphones : ShieldCheck;
+              const IconComp = badge.icon === 'Truck' ? Truck 
+                : badge.icon === 'Lock' ? Lock 
+                : badge.icon === 'Headphones' ? Headphones 
+                : badge.icon === 'Award' ? Award 
+                : badge.icon === 'CheckCircle' ? CheckCircle 
+                : badge.icon === 'RefreshCw' ? RefreshCw 
+                : badge.icon === 'Zap' ? Zap 
+                : badge.icon === 'Star' ? Star 
+                : ShieldCheck;
               return (
                 <div 
                   key={badge.id}
@@ -699,7 +712,7 @@ export default function StoreModulesView({
                     opacity: badge.active ? 1 : 0.6
                   }}
                 >
-                  <div style={{ display: 'flex', itemsAlign: 'flex-start', gap: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px' }}>
                     <div style={{
                       width: '48px',
                       height: '48px',
@@ -710,7 +723,11 @@ export default function StoreModulesView({
                       justifyContent: 'center',
                       flexShrink: 0
                     }}>
-                      <IconComp size={24} color={badge.iconColor || '#6366f1'} />
+                      {badge.imageUrl ? (
+                        <img src={badge.imageUrl} alt={badge.title} style={{ width: '28px', height: '28px', objectFit: 'contain' }} />
+                      ) : (
+                        <IconComp size={24} color={badge.iconColor || '#6366f1'} />
+                      )}
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ fontWeight: '700', fontSize: '15px', color: 'var(--text-primary)' }}>
@@ -1233,6 +1250,8 @@ function BadgeFormModal({ badge, onSave, onClose }) {
     icon: badge ? badge.icon : 'ShieldCheck',
     iconColor: badge ? badge.iconColor : '#6366f1',
     bgColor: badge ? badge.bgColor : 'rgba(99, 102, 241, 0.12)',
+    imageUrl: badge ? (badge.imageUrl || badge.customImage || '') : '',
+    iconType: badge ? (badge.imageUrl || badge.customImage ? (badge.imageUrl?.startsWith('data:') ? 'upload' : 'url') : 'preset') : 'preset',
     active: badge ? badge.active : true
   });
 
@@ -1290,7 +1309,7 @@ function BadgeFormModal({ badge, onSave, onClose }) {
                 {badge ? 'Edit Trust Badge' : 'Add New Trust Badge'}
               </h3>
               <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
-                Configure trust badge icon, title, description, and storefront visibility.
+                Configure trust badge icon, image URL, upload, and storefront visibility.
               </p>
             </div>
           </div>
@@ -1347,32 +1366,130 @@ function BadgeFormModal({ badge, onSave, onClose }) {
             />
           </div>
 
-          {/* Select Icon */}
+          {/* Select Icon / Custom Image Options */}
           <div>
-            <label className="form-label" style={{ fontSize: '13px', fontWeight: '700', marginBottom: '6px', display: 'block' }}>
-              Select Icon
+            <label className="form-label" style={{ fontSize: '13px', fontWeight: '700', marginBottom: '8px', display: 'block' }}>
+              Select Badge Icon / Image Source
             </label>
-            <select 
-              className="form-control"
-              style={{ height: '42px', padding: '10px 14px', fontSize: '14px' }}
-              value={formData.icon}
-              onChange={e => setFormData({ ...formData, icon: e.target.value })}
-            >
-              <option value="ShieldCheck">ShieldCheck (Security / Money Back Guarantee)</option>
-              <option value="Truck">Truck (Shipping / Express Delivery)</option>
-              <option value="Lock">Lock (SSL / Encrypted Payments)</option>
-              <option value="Headphones">Headphones (24/7 Live Customer Support)</option>
-              <option value="Award">Award (Quality Assurance Seal)</option>
-            </select>
+            
+            {/* Mode selection buttons */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+              <button
+                type="button"
+                className={`btn ${formData.iconType === 'preset' ? 'btn-primary' : 'btn-secondary'}`}
+                style={{ flex: 1, padding: '8px 10px', fontSize: '12px' }}
+                onClick={() => setFormData({ ...formData, iconType: 'preset', imageUrl: '' })}
+              >
+                <ShieldCheck size={14} /> Preset Icon
+              </button>
+              <button
+                type="button"
+                className={`btn ${formData.iconType === 'upload' ? 'btn-primary' : 'btn-secondary'}`}
+                style={{ flex: 1, padding: '8px 10px', fontSize: '12px' }}
+                onClick={() => setFormData({ ...formData, iconType: 'upload' })}
+              >
+                <Upload size={14} /> Upload Image
+              </button>
+              <button
+                type="button"
+                className={`btn ${formData.iconType === 'url' ? 'btn-primary' : 'btn-secondary'}`}
+                style={{ flex: 1, padding: '8px 10px', fontSize: '12px' }}
+                onClick={() => setFormData({ ...formData, iconType: 'url' })}
+              >
+                <Link size={14} /> Image URL
+              </button>
+            </div>
+
+            {/* Option 1: Preset Vector Icon */}
+            {formData.iconType === 'preset' && (
+              <select 
+                className="form-control"
+                style={{ height: '42px', padding: '10px 14px', fontSize: '14px' }}
+                value={formData.icon || 'ShieldCheck'}
+                onChange={e => setFormData({ ...formData, icon: e.target.value, imageUrl: '' })}
+              >
+                <option value="ShieldCheck">ShieldCheck (Security / Money Back Guarantee)</option>
+                <option value="Truck">Truck (Shipping / Express Delivery)</option>
+                <option value="Lock">Lock (SSL / Encrypted Payments)</option>
+                <option value="Headphones">Headphones (24/7 Live Customer Support)</option>
+                <option value="Award">Award (Quality Assurance Seal)</option>
+                <option value="CheckCircle">CheckCircle (Verified Authentic)</option>
+                <option value="RefreshCw">RefreshCw (Easy Returns / Exchanges)</option>
+                <option value="Zap">Zap (Instant Fast Processing)</option>
+                <option value="Star">Star (Top Rated Customer Choice)</option>
+              </select>
+            )}
+
+            {/* Option 2: Upload Image File */}
+            {formData.iconType === 'upload' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <input 
+                  type="file"
+                  accept="image/*"
+                  className="form-control"
+                  style={{ height: '42px', padding: '8px 12px', fontSize: '13px' }}
+                  onChange={(e) => {
+                    const file = e.target.files && e.target.files[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setFormData({ ...formData, imageUrl: reader.result });
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                />
+                {formData.imageUrl && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--bg-primary)', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                    <img src={formData.imageUrl} alt="Badge Preview" style={{ width: '36px', height: '36px', objectFit: 'contain', borderRadius: '6px' }} />
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Image uploaded successfully</span>
+                    <button 
+                      type="button" 
+                      style={{ marginLeft: 'auto', background: 'transparent', border: 'none', color: '#ef4444', fontSize: '12px', cursor: 'pointer', fontWeight: '600' }}
+                      onClick={() => setFormData({ ...formData, imageUrl: '' })}
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Option 3: Direct Image URL */}
+            {formData.iconType === 'url' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <input 
+                  type="text" 
+                  className="form-control"
+                  style={{ height: '42px', padding: '10px 14px', fontSize: '14px' }}
+                  value={formData.imageUrl || ''}
+                  onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
+                  placeholder="https://example.com/images/trusted-badge.png"
+                />
+                {formData.imageUrl && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--bg-primary)', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                    <img 
+                      src={formData.imageUrl} 
+                      alt="Badge Preview" 
+                      style={{ width: '36px', height: '36px', objectFit: 'contain', borderRadius: '6px' }} 
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {formData.imageUrl}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Clean 2-Column Grid for Color & Status */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', alignItems: 'end' }}>
             
-            {/* Icon Color Input: Color picker + Hex text input in clean flex layout */}
+            {/* Icon Color Input */}
             <div>
               <label className="form-label" style={{ fontSize: '13px', fontWeight: '700', marginBottom: '6px', display: 'block' }}>
-                Icon Color
+                Icon Color {formData.iconType !== 'preset' && '(For Background)'}
               </label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <input 
@@ -1387,14 +1504,14 @@ function BadgeFormModal({ badge, onSave, onClose }) {
                     background: 'transparent',
                     flexShrink: 0 
                   }}
-                  value={formData.iconColor}
+                  value={formData.iconColor || '#6366f1'}
                   onChange={e => setFormData({ ...formData, iconColor: e.target.value })}
                 />
                 <input 
                   type="text" 
                   className="form-control" 
                   style={{ height: '42px', padding: '8px 12px', fontSize: '13px', fontFamily: 'monospace', textTransform: 'uppercase' }}
-                  value={formData.iconColor}
+                  value={formData.iconColor || '#6366f1'}
                   onChange={e => setFormData({ ...formData, iconColor: e.target.value })}
                   placeholder="#6366F1"
                 />
@@ -1442,7 +1559,13 @@ function BadgeFormModal({ badge, onSave, onClose }) {
             type="button"
             className="btn btn-primary" 
             style={{ padding: '10px 22px', fontSize: '14px', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '8px' }}
-            onClick={() => onSave(formData)}
+            onClick={() => {
+              const payload = {
+                ...formData,
+                imageUrl: formData.iconType === 'preset' ? '' : formData.imageUrl
+              };
+              onSave(payload);
+            }}
           >
             <Save size={16} />
             Save Badge
