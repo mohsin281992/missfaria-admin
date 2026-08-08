@@ -11,8 +11,6 @@ import AnalyticsView from './views/AnalyticsView';
 import StoreModulesView from './views/StoreModulesView';
 import ProductFormModal from './components/ProductFormModal';
 
-import { ExternalLink } from 'lucide-react';
-
 import { 
   initialProducts, 
   initialOrders, 
@@ -504,81 +502,6 @@ export default function App() {
 
       {/* Main Content Workspace */}
       <div className="main-wrapper">
-        {/* Global Announcement Bar (Crawls Right to Left) */}
-        {announcementBar && announcementBar.enabled && (
-          <div style={{
-            backgroundColor: announcementBar.bgColor || '#4f46e5',
-            color: announcementBar.textColor || '#ffffff',
-            fontSize: `${announcementBar.fontSize || 13}px`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '8px 24px',
-            overflow: 'hidden',
-            position: 'sticky',
-            top: 0,
-            zIndex: 95,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-          }}>
-            <div style={{ flex: 1, overflow: 'hidden', whiteSpace: 'nowrap', marginRight: '16px', position: 'relative' }}>
-              <div style={{
-                display: 'inline-block',
-                paddingLeft: '100%',
-                animation: `marqueeTicker ${
-                  announcementBar.scrollSpeed === 'fast' ? '8s' : announcementBar.scrollSpeed === 'slow' ? '25s' : '15s'
-                } linear infinite`,
-                fontWeight: '500'
-              }}>
-                {announcementBar.tickerText}
-              </div>
-            </div>
-
-            {announcementBar.enableRightDetails && (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                whiteSpace: 'nowrap',
-                flexShrink: 0,
-                background: 'rgba(0,0,0,0.15)',
-                padding: '4px 12px',
-                borderRadius: '20px'
-              }}>
-                {announcementBar.rightDetailText && (
-                  <span style={{ fontSize: '12px', opacity: 0.95 }}>
-                    {announcementBar.rightDetailText}
-                  </span>
-                )}
-                {announcementBar.rightBadgeText && (
-                  <span style={{ background: '#f59e0b', color: '#000', fontSize: '10px', fontWeight: '800', padding: '2px 6px', borderRadius: '4px' }}>
-                    {announcementBar.rightBadgeText}
-                  </span>
-                )}
-                {announcementBar.rightLinkText && (
-                  <button 
-                    onClick={() => setActiveTab('store-modules')}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: announcementBar.textColor || '#ffffff',
-                      fontWeight: '700',
-                      textDecoration: 'underline',
-                      fontSize: '12px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px'
-                    }}
-                  >
-                    {announcementBar.rightLinkText}
-                    <ExternalLink size={12} />
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
         <Header 
           activeTab={activeTab}
           activeModuleTab={activeModuleTab}
