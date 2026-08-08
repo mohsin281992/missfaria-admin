@@ -621,6 +621,7 @@ export default function App() {
           onAddCategory={handleAddCategory}
           allProducts={products}
           settings={settings}
+          trustBadges={trustBadges}
           onSave={handleSaveProduct}
           onClose={() => {
             setIsModalOpen(false);

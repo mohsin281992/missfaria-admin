@@ -16,6 +16,9 @@ import {
   Truck, 
   DollarSign, 
   ShieldCheck, 
+  Lock,
+  Headphones,
+  Award,
   Box,
   Eye,
   Info,
@@ -34,6 +37,7 @@ export default function ProductFormModal({
   categories, 
   allProducts,
   settings,
+  trustBadges = [],
   onSave, 
   onClose 
 }) {
@@ -76,10 +80,11 @@ export default function ProductFormModal({
     videoUrls: [''],
     altText: '',
 
-    // Categorization & Relations
+    // Categorization & Trusted Badges
     primaryCategory: categories[0] || 'Electronics',
     subCategories: [],
     tags: [],
+    trustedBadges: (product?.trustedBadges || product?.trustBadges) || [],
     relatedProducts: [],
     upSellProducts: [],
 
@@ -236,6 +241,7 @@ export default function ProductFormModal({
         videoUrls: product.videoUrls && product.videoUrls.length > 0 ? product.videoUrls : [''],
         tags: product.tags || [],
         subCategories: product.subCategories || [],
+        trustedBadges: product.trustedBadges || product.trustBadges || [],
         relatedProducts: product.relatedProducts || [],
         upSellProducts: product.upSellProducts || [],
         metaKeywords: product.metaKeywords || []
@@ -355,7 +361,7 @@ export default function ProductFormModal({
     { id: 'pricing', label: '2. Inventory & Pricing' },
     { id: 'variations', label: '3. Physical & Variations' },
     { id: 'media', label: '4. Media & Assets' },
-    { id: 'categorization', label: '5. Categories & Relations' },
+    { id: 'categorization', label: '5. Trusted Badges' },
     { id: 'seo', label: '6. SEO Data' },
     { id: 'shipping', label: '7. Shipping & Logistics' },
     { id: 'status', label: '8. Status & Visibility' }
@@ -1202,47 +1208,59 @@ export default function ProductFormModal({
               </div>
             )}
 
-            {/* SECTION 5: CATEGORIZATION & RELATIONS */}
+            {/* SECTION 5: TRUSTED BADGES */}
             {activeTab === 'categorization' && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div className="grid-2">
-                  <div className="form-group">
-                    <label className="form-label">Product Category (Compulsory) *</label>
-                    <select 
-                      value={formData.primaryCategory}
-                      onChange={(e) => setFormData({ ...formData, primaryCategory: e.target.value })}
-                      className="form-select"
-                      required
-                    >
-                      <option value="" disabled>-- Select Product Category (Required) --</option>
-                      {categories.map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                
+                {/* Product Category & Keywords */}
+                <div style={{
+                  background: 'var(--card-bg)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-lg)',
+                  padding: '20px'
+                }}>
+                  <div className="grid-2">
+                    <div className="form-group" style={{ margin: 0 }}>
+                      <label className="form-label" style={{ fontWeight: '600' }}>Product Category (Compulsory) *</label>
+                      <select 
+                        value={formData.primaryCategory}
+                        onChange={(e) => setFormData({ ...formData, primaryCategory: e.target.value })}
+                        className="form-select"
+                        required
+                      >
+                        <option value="" disabled>-- Select Product Category (Required) --</option>
+                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+
+                    <div className="form-group" style={{ margin: 0 }}>
+                      <label className="form-label" style={{ fontWeight: '600' }}>Search Keywords / Tags</label>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <input 
+                          type="text" 
+                          value={newTag}
+                          onChange={(e) => setNewTag(e.target.value)}
+                          placeholder="Add tag (e.g. Wireless, Premium)"
+                          className="form-input"
+                        />
+                        <button 
+                          type="button" 
+                          className="btn btn-secondary"
+                          onClick={() => {
+                            if (newTag.trim()) {
+                              setFormData({ ...formData, tags: [...formData.tags, newTag.trim()] });
+                              setNewTag('');
+                            }
+                          }}
+                        >
+                          Add
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="form-group">
-                    <label className="form-label">Search Keywords / Tags</label>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <input 
-                        type="text" 
-                        value={newTag}
-                        onChange={(e) => setNewTag(e.target.value)}
-                        placeholder="Add tag (e.g. Wireless, Premium)"
-                        className="form-input"
-                      />
-                      <button 
-                        type="button" 
-                        className="btn btn-secondary"
-                        onClick={() => {
-                          if (newTag.trim()) {
-                            setFormData({ ...formData, tags: [...formData.tags, newTag.trim()] });
-                            setNewTag('');
-                          }
-                        }}
-                      >
-                        Add
-                      </button>
-                    </div>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '10px' }}>
+                  {formData.tags.length > 0 && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginTop: '12px' }}>
                       {formData.tags.map((t, idx) => (
                         <span key={idx} className="badge badge-neutral" style={{ gap: '6px' }}>
                           {t}
@@ -1250,36 +1268,223 @@ export default function ProductFormModal({
                         </span>
                       ))}
                     </div>
-                  </div>
+                  )}
                 </div>
 
-                {/* Sub-categories Manager */}
-                <div className="form-group">
-                  <label className="form-label">Sub-Categories / Specific Sub-Groups</label>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                    {['Audio', 'Headphones', 'Wearables', 'Smartwatches', 'Outerwear', 'Computer Peripherals', 'Keyboards', 'Office Furniture', 'Gaming', 'Fitness'].map(sub => {
-                      const isSubSelected = formData.subCategories.includes(sub);
-                      return (
-                        <button
-                          key={sub}
-                          type="button"
-                          onClick={() => {
-                            setFormData(prev => ({
-                              ...prev,
-                              subCategories: isSubSelected 
-                                ? prev.subCategories.filter(s => s !== sub)
-                                : [...prev.subCategories, sub]
-                            }));
-                          }}
-                          className={`badge ${isSubSelected ? 'badge-info' : 'badge-neutral'}`}
-                          style={{ padding: '6px 12px', fontSize: '12px', cursor: 'pointer', border: 'none' }}
-                        >
-                          {isSubSelected ? '✓ ' : '+ '}{sub}
-                        </button>
-                      );
-                    })}
+                {/* TRUSTED BADGES SELECTION SECTION */}
+                <div style={{
+                  background: 'var(--card-bg)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-lg)',
+                  padding: '24px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '20px'
+                }}>
+                  {/* Header & Controls */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{
+                        width: '42px',
+                        height: '42px',
+                        borderRadius: '12px',
+                        background: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        boxShadow: '0 4px 14px rgba(16, 185, 129, 0.35)',
+                        flexShrink: 0
+                      }}>
+                        <ShieldCheck size={24} color="#ffffff" />
+                      </div>
+                      <div>
+                        <h4 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--text-primary)', margin: 0 }}>
+                          Select Product Trusted Badges & Security Seals
+                        </h4>
+                        <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: '3px 0 0 0' }}>
+                          Select which available store trust badges to link and display on this product's page.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button 
+                        type="button" 
+                        className="btn btn-secondary btn-sm"
+                        onClick={() => {
+                          const fallbackBadges = [
+                            { id: 'tb-1' }, { id: 'tb-2' }, { id: 'tb-3' }, { id: 'tb-4' }
+                          ];
+                          const list = (trustBadges && trustBadges.length > 0) ? trustBadges : fallbackBadges;
+                          setFormData(prev => ({ ...prev, trustedBadges: list.map(b => b.id) }));
+                        }}
+                      >
+                        ✓ Select All Badges
+                      </button>
+                      <button 
+                        type="button" 
+                        className="btn btn-secondary btn-sm"
+                        onClick={() => {
+                          setFormData(prev => ({ ...prev, trustedBadges: [] }));
+                        }}
+                      >
+                        ✕ Deselect All
+                      </button>
+                    </div>
                   </div>
+
+                  {/* Available Badges Grid */}
+                  {(() => {
+                    const fallbackList = [
+                      { id: 'tb-1', title: 'Free Worldwide Express Shipping', subtitle: 'On all orders above $100 minimum threshold', icon: 'Truck', iconColor: '#6366f1', bgColor: 'rgba(99, 102, 241, 0.12)' },
+                      { id: 'tb-2', title: '30-Day Money Back Guarantee', subtitle: 'Hassle-free 100% full refund policy', icon: 'ShieldCheck', iconColor: '#10b981', bgColor: 'rgba(16, 185, 129, 0.12)' },
+                      { id: 'tb-3', title: '100% Encrypted SSL Payments', subtitle: 'Bank-grade 256-bit secure checkout', icon: 'Lock', iconColor: '#06b6d4', bgColor: 'rgba(6, 182, 212, 0.12)' },
+                      { id: 'tb-4', title: '24/7 Dedicated Live Support', subtitle: 'Instant phone, email & live chat assistance', icon: 'Headphones', iconColor: '#f59e0b', bgColor: 'rgba(245, 158, 11, 0.12)' }
+                    ];
+
+                    const displayList = (trustBadges && trustBadges.length > 0) ? trustBadges : fallbackList;
+
+                    return (
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                        gap: '16px'
+                      }}>
+                        {displayList.map((badge) => {
+                          const isSelected = (formData.trustedBadges || []).includes(badge.id);
+                          const IconComp = badge.icon === 'Truck' ? Truck 
+                            : badge.icon === 'Lock' ? Lock 
+                            : badge.icon === 'Headphones' ? Headphones 
+                            : badge.icon === 'Award' ? Award 
+                            : ShieldCheck;
+
+                          return (
+                            <div 
+                              key={badge.id}
+                              onClick={() => {
+                                const current = formData.trustedBadges || [];
+                                const updated = isSelected 
+                                  ? current.filter(id => id !== badge.id)
+                                  : [...current, badge.id];
+                                setFormData({ ...formData, trustedBadges: updated });
+                              }}
+                              style={{
+                                padding: '16px 18px',
+                                borderRadius: 'var(--radius-md)',
+                                border: isSelected 
+                                  ? '2px solid var(--accent-primary)' 
+                                  : '1px solid var(--border-color)',
+                                background: isSelected 
+                                  ? 'rgba(99, 102, 241, 0.08)' 
+                                  : 'var(--bg-secondary)',
+                                cursor: 'pointer',
+                                transition: 'all var(--transition-fast)',
+                                display: 'flex',
+                                alignItems: 'flex-start',
+                                gap: '14px',
+                                position: 'relative'
+                              }}
+                            >
+                              <div style={{
+                                width: '42px',
+                                height: '42px',
+                                borderRadius: '10px',
+                                background: badge.bgColor || 'rgba(99, 102, 241, 0.12)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0
+                              }}>
+                                <IconComp size={22} color={badge.iconColor || '#6366f1'} />
+                              </div>
+
+                              <div style={{ flex: 1, paddingRight: '24px' }}>
+                                <div style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-primary)', lineHeight: '1.3' }}>
+                                  {badge.title}
+                                </div>
+                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', lineHeight: '1.4' }}>
+                                  {badge.subtitle}
+                                </div>
+                              </div>
+
+                              <div style={{
+                                position: 'absolute',
+                                top: '14px',
+                                right: '14px',
+                                width: '20px',
+                                height: '20px',
+                                borderRadius: '50%',
+                                background: isSelected ? 'var(--accent-primary)' : 'transparent',
+                                border: isSelected ? 'none' : '2px solid var(--border-color)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#ffffff'
+                              }}>
+                                {isSelected && <Check size={12} strokeWidth={3} />}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    );
+                  })()}
+
+                  {/* Real-time Product Page Preview */}
+                  <div style={{
+                    marginTop: '8px',
+                    background: 'var(--bg-primary)',
+                    padding: '16px 20px',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1px dashed var(--border-color)'
+                  }}>
+                    <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--accent-primary)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Sparkles size={15} /> Storefront Product Page Preview:
+                    </div>
+
+                    {(() => {
+                      const fallbackList = [
+                        { id: 'tb-1', title: 'Free Worldwide Express Shipping', subtitle: 'On all orders above $100 minimum threshold', icon: 'Truck', iconColor: '#6366f1' },
+                        { id: 'tb-2', title: '30-Day Money Back Guarantee', subtitle: 'Hassle-free 100% full refund policy', icon: 'ShieldCheck', iconColor: '#10b981' },
+                        { id: 'tb-3', title: '100% Encrypted SSL Payments', subtitle: 'Bank-grade 256-bit secure checkout', icon: 'Lock', iconColor: '#06b6d4' },
+                        { id: 'tb-4', title: '24/7 Dedicated Live Support', subtitle: 'Instant phone, email & live chat assistance', icon: 'Headphones', iconColor: '#f59e0b' }
+                      ];
+                      const displayList = (trustBadges && trustBadges.length > 0) ? trustBadges : fallbackList;
+                      const selectedBadges = displayList.filter(b => (formData.trustedBadges || []).includes(b.id));
+
+                      if (selectedBadges.length === 0) {
+                        return (
+                          <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                            No trusted badges linked to this product. Click badges above to feature them on the product page.
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '10px' }}>
+                          {selectedBadges.map(badge => {
+                            const IconComp = badge.icon === 'Truck' ? Truck 
+                              : badge.icon === 'Lock' ? Lock 
+                              : badge.icon === 'Headphones' ? Headphones 
+                              : badge.icon === 'Award' ? Award 
+                              : ShieldCheck;
+                            return (
+                              <div key={badge.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', background: 'var(--card-bg)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                                <IconComp size={18} color={badge.iconColor || '#6366f1'} />
+                                <div>
+                                  <div style={{ fontSize: '12px', fontWeight: '700' }}>{badge.title}</div>
+                                  <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{badge.subtitle}</div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      );
+                    })()}
+                  </div>
+
                 </div>
+
               </div>
             )}
 
