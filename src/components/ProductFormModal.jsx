@@ -350,7 +350,13 @@ export default function ProductFormModal({
     if (isSaving) return;
     setIsSaving(true);
     try {
-      await onSave(formData);
+      const finalBadges = formData.trustedBadges || formData.trustBadges || [];
+      const payload = {
+        ...formData,
+        trustedBadges: finalBadges,
+        trustBadges: finalBadges
+      };
+      await onSave(payload);
     } finally {
       setIsSaving(false);
     }

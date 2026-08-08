@@ -11,10 +11,20 @@ function mergeProducts(localList = [], supabaseList = []) {
   for (const p of localList) {
     if (p && p.id) map.set(p.id, p);
   }
-  // Overlay/merge Supabase products
+  // Overlay/merge Supabase products intelligently
   for (const p of supabaseList) {
     if (p && p.id) {
-      map.set(p.id, { ...map.get(p.id), ...p });
+      const local = map.get(p.id) || {};
+      const merged = { ...local, ...p };
+
+      const localBadges = (local.trustedBadges && local.trustedBadges.length > 0) ? local.trustedBadges : (local.trustBadges || []);
+      const supabaseBadges = (p.trustedBadges && p.trustedBadges.length > 0) ? p.trustedBadges : (p.trustBadges || []);
+      const finalBadges = supabaseBadges.length > 0 ? supabaseBadges : localBadges;
+
+      merged.trustedBadges = finalBadges;
+      merged.trustBadges = finalBadges;
+
+      map.set(p.id, merged);
     }
   }
   return Array.from(map.values());

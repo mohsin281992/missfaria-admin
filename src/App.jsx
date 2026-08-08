@@ -204,11 +204,24 @@ export default function App() {
 
         if (prodsData && Array.isArray(prodsData) && prodsData.length > 0) {
           setProducts(prev => {
-            const serverMap = new Map(prodsData.map(p => [p.id, p]));
-            const localOnly = prev.filter(p => p && p.id && !serverMap.has(p.id));
-            // Sync local-only products to backend in background
+            const prevMap = new Map(prev.map(p => [p.id, p]));
+            const mergedProds = prodsData.map(sp => {
+              const lp = prevMap.get(sp.id);
+              if (!lp) return sp;
+              const spBadges = (sp.trustedBadges && sp.trustedBadges.length > 0) ? sp.trustedBadges : (sp.trustBadges || []);
+              const lpBadges = (lp.trustedBadges && lp.trustedBadges.length > 0) ? lp.trustedBadges : (lp.trustBadges || []);
+              const finalBadges = spBadges.length > 0 ? spBadges : lpBadges;
+              return {
+                ...lp,
+                ...sp,
+                trustedBadges: finalBadges,
+                trustBadges: finalBadges
+              };
+            });
+            const serverIds = new Set(prodsData.map(p => p.id));
+            const localOnly = prev.filter(p => p && p.id && !serverIds.has(p.id));
             localOnly.forEach(p => api.createProduct(p).catch(() => {}));
-            return [...prodsData, ...localOnly];
+            return [...mergedProds, ...localOnly];
           });
         }
         if (catsData && Array.isArray(catsData) && catsData.length > 0) {
@@ -411,8 +424,11 @@ export default function App() {
   const handleSaveProduct = async (formData) => {
     const now = new Date().toISOString().split('T')[0];
     let tempId = editingProduct ? editingProduct.id : `prod-${Date.now()}`;
+    const badges = formData.trustedBadges || formData.trustBadges || [];
     const optimisticProduct = {
       ...formData,
+      trustedBadges: badges,
+      trustBadges: badges,
       id: tempId,
       updatedAt: now,
       createdAt: editingProduct ? (editingProduct.createdAt || now) : now
@@ -432,15 +448,23 @@ export default function App() {
     // 3. Sync with backend API in background
     try {
       if (editingProduct) {
-        const updated = await api.updateProduct(editingProduct.id, formData);
-        if (updated && updated.id) {
-          setProducts(prev => prev.map(p => p.id === editingProduct.id ? updated : p));
-        }
+        const updated = await api.updateProduct(editingProduct.id, optimisticProduct);
+        const mergedUpdated = {
+          ...optimisticProduct,
+          ...(updated && updated.id ? updated : {}),
+          trustedBadges: (updated && updated.trustedBadges && updated.trustedBadges.length > 0) ? updated.trustedBadges : badges,
+          trustBadges: (updated && updated.trustBadges && updated.trustBadges.length > 0) ? updated.trustBadges : badges
+        };
+        setProducts(prev => prev.map(p => p.id === editingProduct.id ? mergedUpdated : p));
       } else {
-        const created = await api.createProduct(formData);
-        if (created && created.id) {
-          setProducts(prev => prev.map(p => p.id === tempId ? created : p));
-        }
+        const created = await api.createProduct(optimisticProduct);
+        const mergedCreated = {
+          ...optimisticProduct,
+          ...(created && created.id ? created : {}),
+          trustedBadges: (created && created.trustedBadges && created.trustedBadges.length > 0) ? created.trustedBadges : badges,
+          trustBadges: (created && created.trustBadges && created.trustBadges.length > 0) ? created.trustBadges : badges
+        };
+        setProducts(prev => prev.map(p => p.id === tempId ? mergedCreated : p));
       }
     } catch (err) {
       console.warn('Backend API product save note (saved locally in browser):', err);
