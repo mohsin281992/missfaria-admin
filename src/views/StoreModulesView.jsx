@@ -125,14 +125,81 @@ export default function StoreModulesView({
     alert('Stock Counter & Urgency settings saved & synced to Supabase!');
   };
 
+  const moduleHeaders = {
+    'announcement': {
+      title: 'Announcement Bar',
+      description: 'Configure scrolling ticker text, promo details, background colors & CTA links for top announcement bar.',
+      icon: Megaphone,
+      gradient: 'linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)',
+      action: null
+    },
+    'trust-badges': {
+      title: 'Trusted Badges & Security Seals',
+      description: 'Manage checkout trust badges, money-back guarantees, and customer security seals.',
+      icon: ShieldCheck,
+      gradient: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)',
+      action: {
+        label: 'Add Trust Badge',
+        onClick: () => { setEditingBadge(null); setIsBadgeModalOpen(true); }
+      }
+    },
+    'bundles': {
+      title: 'Bundle Offers & Deals',
+      description: 'Create product bundles with automatic discounts to boost Average Order Value (AOV).',
+      icon: PackagePlus,
+      gradient: 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
+      action: {
+        label: 'Create Bundle Offer',
+        onClick: () => { setEditingBundle(null); setIsBundleModalOpen(true); }
+      }
+    },
+    'stock-counters': {
+      title: 'Stock Scarcity & Urgency Timers',
+      description: 'Set low stock warning thresholds, scarcity counters, and live flash sale countdown timers.',
+      icon: Timer,
+      gradient: 'linear-gradient(135deg, #ef4444 0%, #ec4899 100%)',
+      action: null
+    },
+    'faqs': {
+      title: 'FAQ Manager',
+      description: 'Create, edit, and categorize frequently asked questions to resolve buyer doubts before checkout.',
+      icon: HelpCircle,
+      gradient: 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
+      action: {
+        label: 'Add FAQ Question',
+        onClick: () => { setEditingFaq(null); setIsFaqModalOpen(true); }
+      }
+    },
+    'reviews': {
+      title: 'Customer Reviews & Moderation',
+      description: 'Moderate, approve, reject, and manage product reviews and star ratings.',
+      icon: Star,
+      gradient: 'linear-gradient(135deg, #f59e0b 0%, #8b5cf6 100%)',
+      action: {
+        label: 'Add Customer Review',
+        onClick: () => { setIsReviewModalOpen(true); }
+      }
+    }
+  };
+
+  const currentHeader = moduleHeaders[activeTab] || {
+    title: 'Store Modules',
+    description: 'Manage store customization, badges, bundles, timers, FAQs and reviews.',
+    icon: Sparkles,
+    gradient: 'linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)',
+    action: null
+  };
+
+  const HeaderIcon = currentHeader.icon;
+
   return (
     <div className="view-container" style={{ padding: '24px 32px', maxWidth: '1400px', margin: '0 auto' }}>
       
-      {/* Header Banner */}
+      {/* Dynamic Module Header Banner */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        justifySpace: 'between',
+        justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: '16px',
         marginBottom: '28px',
@@ -146,23 +213,44 @@ export default function StoreModulesView({
             width: '52px',
             height: '52px',
             borderRadius: 'var(--radius-md)',
-            background: 'linear-gradient(135deg, #6366f1 0%, #06b6d4 100%)',
+            background: currentHeader.gradient,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             boxShadow: '0 8px 20px rgba(99, 102, 241, 0.35)'
           }}>
-            <Sparkles size={28} color="#ffffff" />
+            <HeaderIcon size={28} color="#ffffff" />
           </div>
           <div>
             <h1 style={{ fontSize: '24px', fontWeight: '800', color: 'var(--text-primary)', margin: 0 }}>
-              Modules & Marketing
+              {currentHeader.title}
             </h1>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: '4px 0 0 0' }}>
-              Manage dynamic announcement bars, trust badges, bundle deals, stock scarcity counters, FAQs & customer reviews.
+              {currentHeader.description}
             </p>
           </div>
         </div>
+
+        {currentHeader.action && (
+          <button 
+            onClick={currentHeader.action.onClick}
+            className="btn btn-primary"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 18px',
+              fontSize: '14px',
+              fontWeight: '600',
+              borderRadius: 'var(--radius-md)',
+              boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
+              cursor: 'pointer'
+            }}
+          >
+            <Plus size={18} />
+            {currentHeader.action.label}
+          </button>
+        )}
       </div>
 
 
@@ -480,14 +568,7 @@ export default function StoreModulesView({
       {/* TAB 3: TRUSTED BADGES */}
       {activeTab === 'trust-badges' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div>
-            <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
-              Trusted Badges & Security Seals
-            </h2>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
-              Manage checkout trust badges, money-back guarantees, and customer security seals.
-            </p>
-          </div>
+
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
             {trustBadges.map((badge) => {
@@ -564,14 +645,7 @@ export default function StoreModulesView({
       {/* TAB 4: BUNDLE OFFERS */}
       {activeTab === 'bundles' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div>
-            <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
-              Bundle Offers & Cross-Sell Packs
-            </h2>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
-              Create product bundles with automatic discounts to boost Average Order Value (AOV).
-            </p>
-          </div>
+
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '20px' }}>
             {bundleOffers.map((bundle) => {
@@ -846,14 +920,7 @@ export default function StoreModulesView({
       {/* TAB 6: FAQ MANAGER */}
       {activeTab === 'faqs' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div>
-            <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
-              Frequently Asked Questions (FAQ) Module
-            </h2>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
-              Manage store FAQs to resolve buyer doubts before checkout.
-            </p>
-          </div>
+
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {faqs.map((faq) => (
@@ -901,14 +968,7 @@ export default function StoreModulesView({
       {/* TAB 7: CUSTOMER REVIEWS */}
       {activeTab === 'reviews' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div>
-            <h2 style={{ fontSize: '18px', fontWeight: '700', margin: 0 }}>
-              Customer Reviews & Ratings Moderation
-            </h2>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '2px 0 0 0' }}>
-              Approve, reject, and manage product reviews and star ratings.
-            </p>
-          </div>
+
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {reviews.map((rev) => (

@@ -3,6 +3,7 @@ import { Search, Bell, Sparkles, Plus, ExternalLink } from 'lucide-react';
 
 export default function Header({ 
   activeTab, 
+  activeModuleTab,
   searchQuery, 
   setSearchQuery, 
   onAddProductClick 
@@ -17,6 +18,19 @@ export default function Header({
     settings: 'Store Configuration & Preferences'
   };
 
+  const moduleTitles = {
+    'announcement': 'Announcement Bar',
+    'trust-badges': 'Trusted Badges & Security Seals',
+    'bundles': 'Bundle Offers & Deals',
+    'stock-counters': 'Stock Scarcity & Countdown Timers',
+    'faqs': 'FAQ Manager',
+    'reviews': 'Customer Reviews & Moderation'
+  };
+
+  const headerTitle = activeTab === 'store-modules' 
+    ? (moduleTitles[activeModuleTab] || 'Store Modules')
+    : (titles[activeTab] || 'Dashboard');
+
   return (
     <header style={{
       height: 'var(--header-height)',
@@ -26,17 +40,17 @@ export default function Header({
       padding: '0 32px',
       display: 'flex',
       alignItems: 'center',
-      justify: 'space-between',
+      justifyContent: 'space-between',
       position: 'sticky',
       top: 0,
       zIndex: 90
     }}>
       <div>
         <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-primary)' }}>
-          {titles[activeTab] || 'Dashboard'}
+          {headerTitle}
         </h2>
         <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-          Real-time catalog inventory and sales metrics
+          Real-time store management and customization panel
         </p>
       </div>
 

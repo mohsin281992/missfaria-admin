@@ -581,6 +581,7 @@ export default function App() {
 
         <Header 
           activeTab={activeTab}
+          activeModuleTab={activeModuleTab}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           onAddProductClick={handleOpenAddModal}
